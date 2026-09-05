@@ -3,23 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#121212">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Catálogo & Portfólio</title>
-
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="icon" type="image/png" href="icon.png">
-
+  <title>Meu Álbum de Memórias</title>
   <style>
     :root {
-      --bg: #121212;
-      --surface: #1e1e1e;
-      --surface-subtle: #2a2a2a;
-      --text: #ffffff;
-      --text-sub: #aaaaaa;
-      --accent: #e0a96d;
-      --border: rgba(255, 255, 255, 0.08);
-      --radius: 16px;
+      --bg: #FDFBF7;
+      --surface: #FFFFFF;
+      --surface-subtle: #F3EFE6;
+      --text: #332C27;
+      --text-sub: #7A7268;
+      --accent: #E29578;
+      --accent-hover: #D88364;
+      --border: #E8E2D5;
+      --radius: 18px;
+      --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      --flash-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Temas Personalizáveis */
+    body.theme-warm {
+      --bg: #FDFBF7;
+      --surface: #FFFFFF;
+      --surface-subtle: #F3EFE6;
+      --text: #332C27;
+      --text-sub: #7A7268;
+      --accent: #E29578;
+      --border: #E8E2D5;
+    }
+
+    body.theme-cozy {
+      --bg: #F4F1EA;
+      --surface: #FFFFFF;
+      --surface-subtle: #E3DDD3;
+      --text: #2C3531;
+      --text-sub: #636E6A;
+      --accent: #84A59D;
+      --border: #D5CEC3;
+    }
+
+    body.theme-lavender {
+      --bg: #F8F6FA;
+      --surface: #FFFFFF;
+      --surface-subtle: #ECE6F2;
+      --text: #2B2533;
+      --text-sub: #6F687A;
+      --accent: #B58A8F;
+      --border: #E2D9E8;
+    }
+
+    body.theme-sunset {
+      --bg: #FFF8F5;
+      --surface: #FFFFFF;
+      --surface-subtle: #FFEAE2;
+      --text: #3D2B28;
+      --text-sub: #82635E;
+      --accent: #F28482;
+      --border: #F3D5CE;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -28,116 +66,466 @@
       margin: 0; padding: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     #app {
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: env(safe-area-inset-top, 20px) 16px 80px;
+      padding: env(safe-area-inset-top, 20px) 16px 100px;
     }
 
-    .header { text-align: center; padding: 24px 0 16px; border-bottom: 1px solid var(--border); }
-    .title { font-size: 26px; font-weight: 700; margin: 0; }
+    /* Topo Acolhedor */
+    .header {
+      text-align: center;
+      padding: 24px 16px 16px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .title { font-size: 24px; font-weight: 700; margin: 0; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 8px; }
     .subtitle { font-size: 13px; color: var(--text-sub); margin-top: 6px; }
 
-    .nav-tabs { display: flex; gap: 8px; margin: 20px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-sub); font-weight: 600; cursor: pointer; border-radius: 10px; font-size: 13px; }
-    .tab-btn.active { background: var(--accent); color: #000; }
+    /* Barra de Temas e Ações */
+    .theme-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .theme-picker {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--surface);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-sub);
+    }
 
-    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; }
-    .chip { padding: 6px 14px; border-radius: 20px; background: var(--surface); color: var(--text-sub); border: 1px solid var(--border); font-size: 12px; cursor: pointer; white-space: nowrap; }
-    .chip.active { background: var(--text); color: var(--bg); font-weight: 700; }
+    .theme-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .theme-dot:hover { transform: scale(1.15); }
+    .theme-dot.active { border-color: var(--text); }
+    .dot-warm { background: #E29578; }
+    .dot-cozy { background: #84A59D; }
+    .dot-lavender { background: #B58A8F; }
+    .dot-sunset { background: #F28482; }
 
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .btn-action-main {
+      background: var(--accent);
+      color: #FFF;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.1s, background-color 0.2s;
+    }
+    .btn-action-main:active { transform: scale(0.96); }
+
+    /* Filtros / Categorias */
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .chip.active { background: var(--accent); color: #FFF; border-color: var(--accent); font-weight: 600; }
+
+    /* Grade Estilo Polaroid / Álbum Pessoal */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
-    .card { background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); cursor: pointer; position: relative; }
-    .photo-box { width: 100%; aspect-ratio: 1/1; background: var(--surface-subtle); overflow: hidden; }
-    .photo-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-    .card:hover .photo-box img { transform: scale(1.05); }
-    .card-info { padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .card-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .fav-heart { color: #e53935; font-size: 14px; }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 10px 10px 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
 
-    .package-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-    .package-title { font-size: 18px; font-weight: 700; color: var(--accent); }
-    .package-price { font-size: 20px; font-weight: 700; margin: 8px 0; }
-    .package-list { font-size: 13px; color: var(--text-sub); padding-left: 18px; line-height: 1.6; }
+    .photo-box {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: var(--surface-subtle);
+      border-radius: calc(var(--radius) - 6px);
+      overflow: hidden;
+      position: relative;
+    }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; }
 
-    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px; }
+    .card-content { padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .card-caption { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-location { font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 4px; }
+    
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .like-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.15s;
+    }
+    .like-btn.liked { color: #E53935; }
+    .like-btn:active { transform: scale(1.3); }
+
+    /* Modal / Carrossel com Flash & Transição */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 25, 22, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 16px;
+    }
     .modal-bg.open { opacity: 1; pointer-events: auto; }
-    .modal { background: var(--surface); border-radius: var(--radius); padding: 16px; width: 100%; max-width: 500px; border: 1px solid var(--border); }
-    .modal img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; }
 
-    .btn-action { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-subtle); color: var(--text); font-weight: 600; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn-fav { background: transparent; border-color: var(--accent); color: var(--accent); }
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-photo-wrapper {
+      position: relative;
+      width: 100%;
+      max-height: 380px;
+      border-radius: calc(var(--radius) - 4px);
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-photo-wrapper img {
+      width: 100%;
+      max-height: 380px;
+      object-fit: contain;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    /* Efeito de Flash na Transição */
+    .flash-overlay {
+      position: absolute;
+      inset: 0;
+      background: #FFF;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .flash-overlay.active {
+      animation: cameraFlash 0.3s ease-out;
+    }
+
+    @keyframes cameraFlash {
+      0% { opacity: 0.85; }
+      100% { opacity: 0; }
+    }
+
+    /* Botões de Navegação do Carrossel */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.85);
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: #333;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 5;
+      transition: transform 0.15s, background-color 0.2s;
+    }
+    .nav-arrow:hover { background: #FFF; transform: translateY(-50%) scale(1.08); }
+    .nav-arrow.prev { left: 10px; }
+    .nav-arrow.next { right: 10px; }
+
+    .modal-info { display: flex; flex-direction: column; gap: 4px; }
+    .modal-caption { font-weight: 700; font-size: 16px; color: var(--text); }
+    .modal-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 12px; align-items: center; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.2s;
+    }
+    .btn-secondary:hover { background: var(--border); }
+
+    /* Modais Pequenos (Compartilhar e Adicionar) */
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      padding: 16px;
+    }
+    .dialog-overlay.open { opacity: 1; pointer-events: auto; }
+    .dialog-box {
+      background: var(--surface);
+      padding: 20px;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .dialog-title { font-size: 18px; font-weight: 700; margin: 0 0 12px; }
+    
+    .input-field {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .input-field:focus { border-color: var(--accent); }
+
+    .permission-options { display: flex; gap: 10px; margin-bottom: 16px; }
+    .perm-card {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 12px;
+      background: var(--surface-subtle);
+      transition: all 0.2s;
+    }
+    .perm-card.selected { border-color: var(--accent); background: var(--surface); font-weight: 700; color: var(--accent); }
+
+    /* Animação Fade In das Fotos */
+    .fade-in {
+      animation: fadeIn 0.25s ease-in-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0.3; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
-<body>
+<body class="theme-warm">
 
 <div id="app">
+
+  <!-- Cabeçalho Afetuoso -->
   <div class="header">
-    <h1 class="title">Portfólio & Catálogo</h1>
-    <p class="subtitle">Apresentação de Trabalhos e Serviços</p>
+    <h1 class="title">📸 Meu Álbum de Memórias</h1>
+    <p class="subtitle">Um cantinho seguro e organizado para guardar meus momentos especiais</p>
   </div>
 
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('galeria', event)">🖼️ Galeria</button>
-    <button class="tab-btn" onclick="switchTab('pacotes', event)">💎 Tabela de Preços</button>
-    <button class="tab-btn" onclick="switchTab('sobre', event)">✨ Sobre</button>
-  </div>
-
-  <div class="tab-content active" id="tab-galeria">
-    <div class="chips">
-      <button class="chip active" onclick="filterPhotos('all', this)">Todas</button>
-      <button class="chip" onclick="filterPhotos('favs', this)">♥ Favoritas</button>
-      <button class="chip" onclick="filterPhotos('Ensaios', this)">Ensaios</button>
-      <button class="chip" onclick="filterPhotos('Casamentos', this)">Casamentos</button>
+  <!-- Barra de Temas e Ações -->
+  <div class="theme-bar">
+    <div class="theme-picker">
+      <span>Cores:</span>
+      <div class="theme-dot dot-warm active" title="Quentinho" onclick="setTheme('warm', this)"></div>
+      <div class="theme-dot dot-cozy" title="Achegado" onclick="setTheme('cozy', this)"></div>
+      <div class="theme-dot dot-lavender" title="Lavanda" onclick="setTheme('lavender', this)"></div>
+      <div class="theme-dot dot-sunset" title="Pôr do Sol" onclick="setTheme('sunset', this)"></div>
     </div>
 
-    <div class="grid" id="portfolio-grid"></div>
-  </div>
-
-  <div class="tab-content" id="tab-pacotes">
-    <div class="package-card">
-      <div class="package-title">Ensaio Individual / Externo</div>
-      <div class="package-price">R$ 350,00</div>
-      <ul class="package-list">
-        <li>1h30 de ensaio</li>
-        <li>20 fotos editadas em alta resolução</li>
-      </ul>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-action-main" style="background: var(--surface-subtle); color: var(--text);" onclick="openShareDialog()">
+        🔗 Compartilhar
+      </button>
+      <button class="btn-action-main" onclick="openAddPhotoDialog()">
+        ➕ Nova Foto
+      </button>
     </div>
   </div>
 
-  <div class="tab-content" id="tab-sobre">
-    <div style="background:var(--surface); padding:20px; border-radius:var(--radius); border:1px solid var(--border); line-height:1.6; font-size:14px; color:var(--text-sub);">
-      <h3 style="color:var(--text); margin-top:0;">Catálogo Digital</h3>
-      <p>Apresentação visual interativa com áudio responsivo.</p>
+  <!-- Filtros por Categorias -->
+  <div class="chips">
+    <button class="chip active" onclick="filterPhotos('all', this)">Todas as Memórias</button>
+    <button class="chip" onclick="filterPhotos('favs', this)">❤️ Curtidas</button>
+    <button class="chip" onclick="filterPhotos('Viagens', this)">✈️ Viagens</button>
+    <button class="chip" onclick="filterPhotos('Família', this)">🏠 Família</button>
+    <button class="chip" onclick="filterPhotos('Amigos', this)">🎉 Amigos</button>
+    <button class="chip" onclick="filterPhotos('Cotidiano', this)">☕ Cotidiano</button>
+  </div>
+
+  <!-- Grade do Álbum -->
+  <div class="grid" id="photo-grid"></div>
+
+</div>
+
+<!-- Modal Visualizador / Carrossel com Efeito Flash e Sons -->
+<div class="modal-bg" id="photo-modal" onclick="closeModalOnBg(event)">
+  <div class="modal-card">
+    <div class="modal-photo-wrapper">
+      <div class="flash-overlay" id="flash-effect"></div>
+      <button class="nav-arrow prev" onclick="navigatePhoto(-1)">‹</button>
+      <img id="modal-img" src="" class="fade-in" alt="Foto Ampliada">
+      <button class="nav-arrow next" onclick="navigatePhoto(1)">›</button>
+    </div>
+
+    <div class="modal-info">
+      <div class="modal-caption" id="modal-caption"></div>
+      <div class="modal-meta">
+        <span id="modal-location">📍 Localização</span>
+        <span>•</span>
+        <span id="modal-category">Categoria</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" id="modal-like-btn" onclick="toggleLikeCurrent()">
+        ❤️ Curtir
+      </button>
+      <button class="btn-secondary" onclick="openShareDialog()">
+        🔗 Compartilhar
+      </button>
+      <button class="btn-secondary" onclick="closeModal()">
+        Fechar
+      </button>
     </div>
   </div>
 </div>
 
-<div class="modal-bg" id="photo-modal" onclick="closeModal(event)">
-  <div class="modal">
-    <img id="modal-img" src="" alt="Foto Ampliada">
-    <div style="margin-top:12px;">
-      <div id="modal-title" style="font-weight:700; font-size:16px;"></div>
-      <div id="modal-tag" style="font-size:12px; color:var(--accent); margin-top:4px;"></div>
-    </div>
+<!-- Modal Compartilhar -->
+<div class="dialog-overlay" id="share-dialog">
+  <div class="dialog-box">
+    <h3 class="dialog-title">🔗 Compartilhar Álbum</h3>
+    <p style="font-size: 12px; color: var(--text-sub); margin-top:0;">Escolha quem pode ver ou ajudar a organizar suas fotos:</p>
     
-    <button class="btn-action btn-fav" id="modal-fav-btn" onclick="toggleFavCurrent()">
-      ♥ Favoritar Foto
-    </button>
-    <button class="btn-action" onclick="closeModalDirect()">Fechar Visualização</button>
+    <label style="font-size: 12px; font-weight:600; display:block; margin-bottom:4px;">Nível de Acesso:</label>
+    <div class="permission-options">
+      <div class="perm-card selected" id="perm-view" onclick="selectPerm('view')">
+        👀 Apenas Ver
+      </div>
+      <div class="perm-card" id="perm-edit" onclick="selectPerm('edit')">
+        ✏️ Permissão para Editar
+      </div>
+    </div>
+
+    <label style="font-size: 12px; font-weight:600; display:block; margin-bottom:4px;">Link Seguro do Álbum:</label>
+    <input type="text" class="input-field" id="share-link-input" readonly value="https://meualbum.app/v/memorias-privadas-883">
+
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-action-main" style="flex:1;" onclick="copyShareLink()">📋 Copiar Link</button>
+      <button class="btn-secondary" style="flex:1;" onclick="closeShareDialog()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Adicionar Foto -->
+<div class="dialog-overlay" id="add-dialog">
+  <div class="dialog-box">
+    <h3 class="dialog-title">📸 Adicionar Nova Memória</h3>
+    
+    <input type="text" id="new-caption" class="input-field" placeholder="Legenda / O que aconteceu?">
+    <input type="text" id="new-location" class="input-field" placeholder="📍 Localização (ex: Praia do Rosa, SC)">
+    
+    <select id="new-category" class="input-field">
+      <option value="Viagens">✈️ Viagens</option>
+      <option value="Família">🏠 Família</option>
+      <option value="Amigos">🎉 Amigos</option>
+      <option value="Cotidiano">☕ Cotidiano</option>
+    </select>
+
+    <input type="text" id="new-url" class="input-field" placeholder="Link da imagem (ou deixe em branco para padrão)">
+
+    <div style="display: flex; gap: 8px; margin-top: 8px;">
+      <button class="btn-action-main" style="flex:1;" onclick="addNewPhoto()">Guardar Foto</button>
+      <button class="btn-secondary" style="flex:1;" onclick="closeAddDialog()">Cancelar</button>
+    </div>
   </div>
 </div>
 
 <script>
-  // SISTEMA DE ÁUDIO SINTÉTICO (Web Audio API)
+  // 🔊 SISTEMA DE ÁUDIO SINTÉTICO AGRADÁVEL (Web Audio API)
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
 
@@ -146,145 +534,295 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  function playClickSound() {
+  // Som suave de clique ao trocar abas/temas
+  function playSoftClick() {
     initAudio();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+    osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.03);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
     osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.03);
   }
 
-  function playShutterSound() {
+  // Som de Câmera/Slide ao passar de foto no carrossel
+  function playPhotoSlideSound() {
     initAudio();
+    const now = audioCtx.currentTime;
+    // Clique mecânico sutil
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.08);
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+    osc.frequency.setValueAtTime(280, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.05);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
     osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+    osc.start(now); osc.stop(now + 0.05);
   }
 
-  function playSatisfyingFavSound() {
+  // Som fofinho ao curtir foto (Tom caloroso)
+  function playWarmLikeSound() {
     initAudio();
     const now = audioCtx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // Acorde Maior Harmônico (C E G C)
+    const notes = [440, 554.37, 659.25]; // A4, C#5, E5 (Triad Maior suave)
     notes.forEach((freq, idx) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.05);
-      gain.gain.setValueAtTime(0.2, now + idx * 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.25);
+      osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+      gain.gain.setValueAtTime(0.15, now + idx * 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.2);
       osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(now + idx * 0.05);
-      osc.stop(now + idx * 0.05 + 0.25);
+      osc.start(now + idx * 0.04);
+      osc.stop(now + idx * 0.04 + 0.2);
     });
   }
 
-  function playAddPhotoSound() {
+  // Som de Sucesso ao Adicionar Memória Nova
+  function playSuccessSound() {
     initAudio();
     const now = audioCtx.currentTime;
-    [440, 880].forEach((freq, idx) => {
+    [523.25, 659.25, 783.99].forEach((freq, idx) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-      gain.gain.setValueAtTime(0.25, now + idx * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
+      osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+      gain.gain.setValueAtTime(0.15, now + idx * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.06 + 0.25);
       osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(now + idx * 0.08);
-      osc.stop(now + idx * 0.08 + 0.15);
+      osc.start(now + idx * 0.06);
+      osc.stop(now + idx * 0.06 + 0.25);
     });
   }
 
-  // DADOS E LÓGICA DO APP
-  let activeItem = null;
-  const portfolioData = [
-    { id: 1, title: "Ensaio External", tag: "Ensaios", isFav: false, url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" },
-    { id: 2, title: "Cerimônia", tag: "Casamentos", isFav: false, url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800" },
-    { id: 3, title: "Retrato Studio", tag: "Ensaios", isFav: false, url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" }
+  // DADOS DAS MEMÓRIAS (Fotos amadoras de momento)
+  let photos = [
+    { id: 1, caption: "Café da manhã de domingo em família", location: "Minas Gerais", category: "Família", liked: true, url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" },
+    { id: 2, caption: "Pôr do sol incrível na praia", location: "Florianópolis, SC", category: "Viagens", liked: true, url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" },
+    { id: 3, caption: "Reunião de velhos amigos de infância", location: "São Paulo, SP", category: "Amigos", liked: false, url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800" },
+    { id: 4, caption: "Cantinho de leitura do meu quarto", location: "Em Casa", category: "Cotidiano", liked: false, url: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800" },
+    { id: 5, caption: "Trilha no parque no final da tarde", location: "Curitiba, PR", category: "Viagens", liked: false, url: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800" }
   ];
 
-  function renderPortfolio(filter = 'all') {
-    const grid = document.getElementById("portfolio-grid");
-    grid.innerHTML = "";
-    
-    let list = portfolioData;
-    if (filter === 'favs') list = portfolioData.filter(i => i.isFav);
-    else if (filter !== 'all') list = portfolioData.filter(i => i.tag === filter);
+  let currentFilter = 'all';
+  let filteredPhotos = [...photos];
+  let currentModalIndex = 0;
+  let selectedPerm = 'view';
 
-    list.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
+  // GERENCIAMENTO DE TEMAS
+  function setTheme(themeName, element) {
+    playSoftClick();
+    document.body.className = `theme-${themeName}`;
+    document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
+    element.classList.add('active');
+  }
+
+  // RENDERIZAÇÃO DA GRADE DE FOTOS
+  function renderPhotos() {
+    const grid = document.getElementById('photo-grid');
+    grid.innerHTML = '';
+
+    if (currentFilter === 'favs') {
+      filteredPhotos = photos.filter(p => p.liked);
+    } else if (currentFilter !== 'all') {
+      filteredPhotos = photos.filter(p => p.category === currentFilter);
+    } else {
+      filteredPhotos = [...photos];
+    }
+
+    filteredPhotos.forEach((photo, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
       card.innerHTML = `
-        <div class="photo-box"><img src="${item.url}" loading="lazy"></div>
-        <div class="card-info">
-          <div class="card-title">${item.title}</div>
-          ${item.isFav ? '<span class="fav-heart">♥</span>' : ''}
+        <div class="photo-box">
+          <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
+        </div>
+        <div class="card-content">
+          <div class="card-caption">${photo.caption}</div>
+          <div class="card-location">📍 ${photo.location}</div>
+          <div class="card-footer">
+            <span style="font-size:11px; opacity:0.8;">#${photo.category}</span>
+            <button class="like-btn ${photo.liked ? 'liked' : ''}" onclick="toggleLikeInGrid(event, ${photo.id})">
+              ${photo.liked ? '❤️' : '🤍'}
+            </button>
+          </div>
         </div>
       `;
-      card.onclick = () => { playShutterSound(); openModal(item); };
+      card.onclick = (e) => {
+        if (e.target.closest('.like-btn')) return;
+        openModal(index);
+      };
       grid.appendChild(card);
     });
   }
 
-  function filterPhotos(tag, element) {
-    playClickSound();
-    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-    element.classList.add("active");
-    renderPortfolio(tag);
+  function filterPhotos(cat, element) {
+    playSoftClick();
+    currentFilter = cat;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    element.classList.add('active');
+    renderPhotos();
   }
 
-  function switchTab(tabId, event) {
-    playClickSound();
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-    
-    event.target.classList.add("active");
-    document.getElementById(`tab-${tabId}`).classList.add("active");
-  }
-
-  function openModal(item) {
-    activeItem = item;
-    document.getElementById("modal-img").src = item.url;
-    document.getElementById("modal-title").innerText = item.title;
-    document.getElementById("modal-tag").innerText = `#${item.tag}`;
-    
-    const favBtn = document.getElementById("modal-fav-btn");
-    favBtn.innerText = item.isFav ? "♥ Favoritado" : "♡ Favoritar Foto";
-    document.getElementById("photo-modal").classList.add("open");
-  }
-
-  function toggleFavCurrent() {
-    if (!activeItem) return;
-    activeItem.isFav = !activeItem.isFav;
-    if (activeItem.isFav) {
-      playSatisfyingFavSound();
-    } else {
-      playClickSound();
+  function toggleLikeInGrid(event, id) {
+    event.stopPropagation();
+    const photo = photos.find(p => p.id === id);
+    if (photo) {
+      photo.liked = !photo.liked;
+      if (photo.liked) playWarmLikeSound();
+      else playSoftClick();
+      renderPhotos();
     }
-    document.getElementById("modal-fav-btn").innerText = activeItem.isFav ? "♥ Favoritado" : "♡ Favoritar Foto";
-    renderPortfolio();
   }
 
-  function closeModalDirect() {
-    playClickSound();
-    document.getElementById("photo-modal").classList.remove("open");
+  // CARROSSEL E NAVEGAÇÃO COM EFEITO FLASH
+  function openModal(index) {
+    currentModalIndex = index;
+    updateModalContent();
+    document.getElementById('photo-modal').classList.add('open');
   }
 
-  function closeModal(e) {
-    if (e.target.id === "photo-modal") closeModalDirect();
+  function updateModalContent() {
+    const photo = filteredPhotos[currentModalIndex];
+    if (!photo) return;
+
+    const img = document.getElementById('modal-img');
+    const flash = document.getElementById('flash-effect');
+
+    // Efeito de Flash na Troca
+    flash.classList.remove('active');
+    void flash.offsetWidth; // Trigger Reflow
+    flash.classList.add('active');
+
+    // Fade in suave na imagem
+    img.classList.remove('fade-in');
+    void img.offsetWidth;
+    img.classList.add('fade-in');
+
+    img.src = photo.url;
+    document.getElementById('modal-caption').innerText = photo.caption;
+    document.getElementById('modal-location').innerText = `📍 ${photo.location}`;
+    document.getElementById('modal-category').innerText = `#${photo.category}`;
+
+    const likeBtn = document.getElementById('modal-like-btn');
+    likeBtn.innerHTML = photo.liked ? '❤️ Curtida' : '🤍 Curtir';
+    likeBtn.style.color = photo.liked ? '#E53935' : 'var(--text)';
   }
 
-  renderPortfolio();
+  function navigatePhoto(direction) {
+    playPhotoSlideSound();
+    currentModalIndex += direction;
+    if (currentModalIndex < 0) currentModalIndex = filteredPhotos.length - 1;
+    if (currentModalIndex >= filteredPhotos.length) currentModalIndex = 0;
+    updateModalContent();
+  }
+
+  function toggleLikeCurrent() {
+    const photo = filteredPhotos[currentModalIndex];
+    if (photo) {
+      photo.liked = !photo.liked;
+      if (photo.liked) playWarmLikeSound();
+      else playSoftClick();
+      updateModalContent();
+      renderPhotos();
+    }
+  }
+
+  function closeModal() {
+    playSoftClick();
+    document.getElementById('photo-modal').classList.remove('open');
+  }
+
+  function closeModalOnBg(e) {
+    if (e.target.classList.contains('modal-bg')) closeModal();
+  }
+
+  // DIÁLOGO DE COMPARTILHAMENTO
+  function openShareDialog() {
+    playSoftClick();
+    document.getElementById('share-dialog').classList.add('open');
+  }
+
+  function closeShareDialog() {
+    playSoftClick();
+    document.getElementById('share-dialog').classList.remove('open');
+  }
+
+  function selectPerm(perm) {
+    playSoftClick();
+    selectedPerm = perm;
+    document.getElementById('perm-view').classList.toggle('selected', perm === 'view');
+    document.getElementById('perm-edit').classList.toggle('selected', perm === 'edit');
+    
+    const input = document.getElementById('share-link-input');
+    input.value = perm === 'edit' 
+      ? "https://meualbum.app/v/edit-colab-memorias-992" 
+      : "https://meualbum.app/v/memorias-privadas-883";
+  }
+
+  function copyShareLink() {
+    playSuccessSound();
+    const input = document.getElementById('share-link-input');
+    input.select();
+    navigator.clipboard.writeText(input.value);
+    alert('Link copiado com sucesso! Agora você pode enviar para quem quiser.');
+    closeShareDialog();
+  }
+
+  // DIÁLOGO DE ADICIONAR FOTO
+  function openAddPhotoDialog() {
+    playSoftClick();
+    document.getElementById('add-dialog').classList.add('open');
+  }
+
+  function closeAddDialog() {
+    playSoftClick();
+    document.getElementById('add-dialog').classList.remove('open');
+  }
+
+  function addNewPhoto() {
+    const caption = document.getElementById('new-caption').value || "Minha nova memória";
+    const location = document.getElementById('new-location').value || "Em algum lugar especial";
+    const category = document.getElementById('new-category').value;
+    const urlInput = document.getElementById('new-url').value;
+    const url = urlInput || "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=800";
+
+    const newPhoto = {
+      id: Date.now(),
+      caption,
+      location,
+      category,
+      liked: false,
+      url
+    };
+
+    photos.unshift(newPhoto);
+    playSuccessSound();
+    renderPhotos();
+    closeAddDialog();
+
+    // Limpar formulário
+    document.getElementById('new-caption').value = '';
+    document.getElementById('new-location').value = '';
+    document.getElementById('new-url').value = '';
+  }
+
+  // Suporte a teclas de atalho do teclado (Setas)
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('photo-modal');
+    if (modal.classList.contains('open')) {
+      if (e.key === 'ArrowLeft') navigatePhoto(-1);
+      if (e.key === 'ArrowRight') navigatePhoto(1);
+      if (e.key === 'Escape') closeModal();
+    }
+  });
+
+  renderPhotos();
 </script>
+
 </body>
 </html>
