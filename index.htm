@@ -3,24 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Caça Visual - Desafio Fotográfico</title>
+    <title>Caça Visual - Neon Edition</title>
     <style>
         :root {
-            --bg-dark: #090D16;
-            --bg-card: rgba(22, 30, 46, 0.75);
-            --bg-card-border: rgba(255, 255, 255, 0.1);
-            --primary-glow: #6366F1;
-            --accent-yellow: #F59E0B;
-            --accent-cyan: #06B6D4;
-            --accent-green: #10B981;
-            --accent-pink: #EC4899;
-            --accent-red: #EF4444;
-            --text-main: #F8FAFC;
-            --text-muted: #94A3B8;
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --bg-body: #050811;
+            --panel-bg: #0D1322;
+            --neon-cyan: #00F0FF;
+            --neon-magenta: #FF007A;
+            --neon-yellow: #FFE600;
+            --neon-green: #00FF66;
+            --text-main: #FFFFFF;
+            --text-muted: #64748B;
+            --radius-main: 16px;
+            --font-stack: 'Courier New', Courier, monospace, sans-serif;
         }
 
         * {
@@ -32,38 +27,37 @@
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-body);
             color: var(--text-main);
-            font-family: var(--font-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+                radial-gradient(circle at 50% 10%, rgba(0, 240, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(255, 0, 122, 0.15) 0%, transparent 50%);
         }
 
         #app-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 440px;
             height: 100vh;
-            max-height: 920px;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(20px);
+            max-height: 900px;
+            background: var(--panel-bg);
             position: relative;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
         }
 
-        @media (min-width: 481px) {
+        @media (min-width: 441px) {
             #app-container {
-                height: 94vh;
-                border-radius: 32px;
-                border: 1px solid var(--bg-card-border);
+                height: 92vh;
+                border-radius: 24px;
             }
         }
 
@@ -72,11 +66,11 @@
             top: 0; left: 0; width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            padding: 20px;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(15px) scale(0.97);
+            transition: all 0.25s ease-out;
+            transform: scale(0.96);
             z-index: 1;
             overflow-y: auto;
         }
@@ -84,81 +78,91 @@
         .screen.active {
             opacity: 1;
             pointer-events: auto;
-            transform: translateY(0) scale(1);
+            transform: scale(1);
             z-index: 2;
         }
 
-        /* Tipografia e Botões */
-        h1 {
-            font-size: 2.2rem;
+        /* Estilo Arcade / Neon */
+        .arcade-title {
+            font-size: 2rem;
             font-weight: 900;
             text-align: center;
-            background: linear-gradient(135deg, #FFF 30%, var(--accent-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
+            color: #FFF;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
         }
-        h2 { font-size: 1.3rem; font-weight: 800; }
-        p.subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; margin-bottom: 24px; }
 
-        .btn {
-            border: none;
-            padding: 16px 20px;
-            border-radius: var(--radius-md);
-            font-size: 0.95rem;
+        .subtitle {
+            text-align: center;
+            color: var(--neon-cyan);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Botões Estilizados */
+        .btn-game {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 14px 18px;
+            border-radius: var(--radius-main);
+            font-size: 0.9rem;
             font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.2s ease;
-            width: 100%;
+            transition: all 0.15s ease;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
         }
 
-        .btn:active { transform: scale(0.97); }
-        .btn-primary { background: linear-gradient(135deg, var(--primary-glow), #4F46E5); color: #FFF; }
-        .btn-yellow { background: linear-gradient(135deg, var(--accent-yellow), #D97706); color: #000; }
-        .btn-green { background: linear-gradient(135deg, var(--accent-green), #059669); color: #FFF; }
-        .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--bg-card-border); color: var(--text-main); }
-        .btn-ghost { background: transparent; color: var(--text-muted); box-shadow: none; }
-
-        /* Splash Screen */
-        #screen-home { justify-content: center; align-items: center; }
-        .logo-box {
-            width: 90px; height: 90px;
-            background: linear-gradient(135deg, var(--primary-glow), var(--accent-pink));
-            border-radius: 28px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2.8rem;
-            margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.35);
+        .btn-game:active {
+            transform: scale(0.96);
+            background: var(--neon-cyan);
+            color: #000;
         }
 
-        /* HUD & Gameplay */
-        .hud {
+        .btn-magenta { border-color: var(--neon-magenta); color: var(--neon-magenta); box-shadow: 0 0 10px rgba(255, 0, 122, 0.1); }
+        .btn-magenta:active { background: var(--neon-magenta); color: #FFF; }
+
+        .btn-yellow { border-color: var(--neon-yellow); color: var(--neon-yellow); box-shadow: 0 0 10px rgba(255, 230, 0, 0.1); }
+        .btn-yellow:active { background: var(--neon-yellow); color: #000; }
+
+        .btn-green { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 102, 0.1); }
+        .btn-green:active { background: var(--neon-green); color: #000; }
+
+        .btn-subtle { border-color: rgba(255, 255, 255, 0.15); color: var(--text-muted); }
+
+        /* Painel HUD */
+        .hud-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--bg-card-border);
-            padding: 12px;
-            border-radius: var(--radius-lg);
             margin-bottom: 16px;
         }
-        .hud-card { display: flex; flex-direction: column; align-items: center; }
-        .hud-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .hud-val { font-size: 1.1rem; font-weight: 900; margin-top: 2px; }
+        .hud-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-main);
+            padding: 10px 6px;
+            text-align: center;
+        }
+        .hud-box .lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; display: block; }
+        .hud-box .val { font-size: 1.1rem; font-weight: 900; color: #FFF; margin-top: 2px; }
 
-        .card-challenge {
+        /* Card do Desafio */
+        .challenge-card {
             flex: 1;
-            background: var(--bg-card);
-            border: 1px solid var(--bg-card-border);
-            border-radius: var(--radius-xl);
-            padding: 28px 20px;
+            background: linear-gradient(180deg, rgba(13, 19, 34, 0.8) 0%, rgba(5, 8, 17, 0.9) 100%);
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-main);
+            padding: 24px 16px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -166,273 +170,303 @@
             text-align: center;
             position: relative;
             margin-bottom: 16px;
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
         }
 
-        .category-badge {
-            position: absolute;
-            top: 20px;
-            background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            color: #A5B4FC;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 800;
+        .badge-cat {
+            background: var(--neon-magenta);
+            color: #FFF;
+            font-size: 0.65rem;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 20px;
             text-transform: uppercase;
+            position: absolute;
+            top: 16px;
+            letter-spacing: 1px;
         }
 
-        .challenge-phrase {
-            font-size: 1.35rem;
+        .challenge-title {
+            font-size: 1.25rem;
             font-weight: 800;
             line-height: 1.4;
-            margin: 24px 0;
             color: #FFF;
+            margin: 20px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-        .difficulty-tag {
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-        .diff-facil { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
-        .diff-medio { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); }
-        .diff-dificil { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
-
-        /* Camera Modal */
-        #camera-viewport { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; background: #000; }
-        .camera-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 24px; z-index: 10;
-            background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.85) 100%);
+        /* Camera Viewport */
+        #cam-viewport { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .cam-controls {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 20px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            display: flex; gap: 10px; z-index: 10;
         }
 
-        /* Review & Galeria */
-        .photo-preview {
-            width: 100%;
-            height: 55%;
-            border-radius: var(--radius-lg);
-            object-fit: cover;
-            margin-bottom: 16px;
-            border: 1px solid var(--bg-card-border);
-        }
-
-        .gallery-grid {
+        /* Galeria */
+        .gallery-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
             width: 100%;
             margin-bottom: 16px;
         }
-        .gallery-item {
+        .gallery-box {
             aspect-ratio: 1;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-main);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
             position: relative;
-            background: var(--bg-card);
-            border: 1px solid var(--bg-card-border);
         }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-        .gallery-item .no-photo-placeholder {
+        .gallery-box img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-box .no-img {
             width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(255, 255, 255, 0.03); color: var(--text-muted);
-            font-size: 0.75rem; font-weight: 700; text-align: center; padding: 8px;
+            font-size: 0.7rem; color: var(--text-muted); text-align: center; padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
         }
-        .gallery-item .cap {
+        .gallery-box .tag {
             position: absolute; bottom: 0; left: 0; right: 0;
-            background: rgba(0, 0, 0, 0.85); font-size: 0.65rem;
-            padding: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            background: rgba(0, 0, 0, 0.85); font-size: 0.6rem; color: #FFF;
+            padding: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
         }
 
-        /* Notificação Toast estilo Arcade */
-        #toast {
-            position: absolute; top: 20px; left: 50%;
+        /* Toast Popup */
+        #toast-bar {
+            position: absolute; top: 16px; left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background: linear-gradient(135deg, var(--accent-yellow), #D97706);
-            color: #000; padding: 12px 24px; border-radius: 40px;
-            font-weight: 900; font-size: 0.85rem;
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 100;
+            background: var(--neon-yellow); color: #000;
+            padding: 10px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: 900;
+            box-shadow: 0 0 15px var(--neon-yellow);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
         }
-        #toast.visible { transform: translateX(-50%) translateY(0); }
+        #toast-bar.active { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        <div id="toast">+100 PONTOS!</div>
+        <div id="toast-bar">+100 PTS!</div>
 
-        <!-- TELA INICIAL -->
-        <section id="screen-home" class="screen active">
-            <div class="logo-box">📸</div>
-            <h1>CAÇA VISUAL</h1>
-            <p class="subtitle">Sua caça ao tesouro fotográfica do dia a dia.</p>
-            
-            <div style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
-                <button class="btn btn-primary" onclick="App.startSetup('classico')">Modo Clássico</button>
-                <button class="btn btn-yellow" onclick="App.startSetup('surpresa')">Modo Surpresa</button>
-                <button class="btn btn-outline" onclick="App.showScreen('screen-achievements')">Conquistas</button>
+        <!-- MENU INICIAL -->
+        <section id="screen-menu" class="screen active" style="justify-content: center;">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="font-size: 3.5rem; margin-bottom: 10px;">📸</div>
+                <h1 class="arcade-title">CAÇA VISUAL</h1>
+                <p class="subtitle">Caça ao Tesouro Fotográfica</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                <button class="btn-game" onclick="App.setupGame('classico')">Modo Caçada Libre</button>
+                <button class="btn-game btn-magenta" onclick="App.setupGame('surpresa')">Modo Surpresa / Desafio</button>
             </div>
         </section>
 
-        <!-- TELA DE CONFIGURAÇÃO -->
-        <section id="screen-setup" class="screen">
-            <h2>Configurar Partida</h2>
-            <p class="subtitle" id="setup-mode-title">Ajuste as regras do jogo</p>
+        <!-- CONFIGURAÇÃO DA PARTIDA -->
+        <section id="screen-config" class="screen">
+            <h1 class="arcade-title" style="font-size: 1.5rem;">CONFIGURAR</h1>
+            <p class="subtitle" id="config-subtitle">Ajuste os parâmetros</p>
 
-            <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px;">
+            <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: auto;">
                 <div>
-                    <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Quantidade de Desafios</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;" id="opt-rounds">
-                        <button class="btn btn-outline opt-btn selected" data-val="5">5</button>
-                        <button class="btn btn-outline opt-btn" data-val="10">10</button>
-                        <button class="btn btn-outline opt-btn" data-val="15">15</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Tempo Limite</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;" id="opt-time">
-                        <button class="btn btn-outline opt-btn selected" data-val="0">Livre</button>
-                        <button class="btn btn-outline opt-btn" data-val="300">5 min</button>
-                        <button class="btn btn-outline opt-btn" data-val="600">10 min</button>
+                    <label style="font-size: 0.7rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Número de Missões</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+                        <button class="btn-game btn-subtle cfg-rounds selected" onclick="App.setCfg('rounds', 5, this)">5</button>
+                        <button class="btn-game btn-subtle cfg-rounds" onclick="App.setCfg('rounds', 10, this)">10</button>
+                        <button class="btn-game btn-subtle cfg-rounds" onclick="App.setCfg('rounds', 15, this)">15</button>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn btn-green" onclick="App.startGame()">Iniciar Caçada</button>
-                <button class="btn btn-ghost" onclick="App.showScreen('screen-home')">Voltar</button>
-            </div>
+            <button class="btn-game btn-green" style="margin-bottom: 8px;" onclick="App.startSession()">[ INICIAR JOGO ]</button>
+            <button class="btn-game btn-subtle" onclick="App.showScreen('screen-menu')">Voltar</button>
         </section>
 
-        <!-- TELA DE GAMEPLAY -->
-        <section id="screen-game" class="screen">
-            <div class="hud">
-                <div class="hud-card">
-                    <span class="hud-title">Rodada</span>
-                    <span class="hud-val" id="hud-round">1/5</span>
+        <!-- TELA DO JOGO (GAMEPLAY) -->
+        <section id="screen-gameplay" class="screen">
+            <div class="hud-grid">
+                <div class="hud-box">
+                    <span class="lbl">Missão</span>
+                    <span class="val" id="hud-mira">1/5</span>
                 </div>
-                <div class="hud-card">
-                    <span class="hud-title">Tempo</span>
-                    <span class="hud-val" id="hud-timer">--:--</span>
+                <div class="hud-box">
+                    <span class="lbl">Combo</span>
+                    <span class="val" id="hud-combo" style="color: var(--neon-magenta);">x1</span>
                 </div>
-                <div class="hud-card">
-                    <span class="hud-title">Pontos</span>
-                    <span class="hud-val" id="hud-score" style="color: var(--accent-yellow);">0</span>
+                <div class="hud-box">
+                    <span class="lbl">Score</span>
+                    <span class="val" id="hud-score" style="color: var(--neon-yellow);">0</span>
                 </div>
             </div>
 
-            <div class="card-challenge">
-                <span class="category-badge" id="card-category">CATEGORIA</span>
-                <p class="challenge-phrase" id="card-text">Carregando missão...</p>
-                <span class="difficulty-tag diff-facil" id="card-diff">FÁCIL</span>
+            <div class="challenge-card">
+                <span class="badge-cat" id="card-cat-text">CATEGORIA</span>
+                <p class="challenge-title" id="card-main-text">Gerando desafio...</p>
             </div>
 
+            <!-- BOTÕES DE AÇÃO REESTRUTURADOS -->
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn btn-primary" onclick="App.openCamera()">📷 Capturar com Câmera</button>
-                <button class="btn btn-outline" onclick="App.completeWithoutPhoto()">✓ Concluir Sem Anexar Foto</button>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
-                    <button class="btn btn-ghost" style="font-size: 0.8rem;" onclick="App.skipChallenge()">⏩ Pular (-Combo)</button>
-                    <button class="btn btn-ghost" style="font-size: 0.8rem; color: var(--accent-red);" onclick="App.confirmExit()">🚪 Sair do Jogo</button>
+                <button class="btn-game btn-yellow" onclick="App.openCam()">📷 Tirar Foto Pelo App</button>
+                <button class="btn-game btn-green" onclick="App.completeManual()">✓ Concluir (Câmera Externa / Sem Foto)</button>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn-game btn-subtle" style="font-size: 0.75rem;" onclick="App.skipMission()">⏩ Pular Missão</button>
+                    <button class="btn-game btn-magenta" style="font-size: 0.75rem;" onclick="App.exitGame()">🚪 Sair</button>
                 </div>
             </div>
         </section>
 
-        <!-- TELA DA CÂMERA -->
-        <section id="screen-camera" class="screen" style="padding: 0;">
-            <video id="camera-viewport" autoplay playsinline></video>
-            <canvas id="camera-canvas" style="display: none;"></canvas>
-            <div class="camera-overlay">
-                <div style="text-align: center; color: #FFF;">
-                    <p id="cam-hud-text" style="font-weight: 800; font-size: 0.95rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></p>
-                </div>
-                <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline" style="flex: 1; background: rgba(0,0,0,0.6);" onclick="App.closeCamera()">Cancelar</button>
-                    <button class="btn btn-yellow" style="flex: 2; height: 56px;" onclick="App.takePhoto()">FOTOGRAFAR</button>
-                </div>
+        <!-- CÂMERA INTEGRADA -->
+        <section id="screen-cam" class="screen" style="padding: 0;">
+            <video id="cam-viewport" autoplay playsinline></video>
+            <canvas id="cam-canvas" style="display: none;"></canvas>
+            <div class="cam-controls">
+                <button class="btn-game btn-subtle" style="flex: 1;" onclick="App.closeCam()">Voltar</button>
+                <button class="btn-game btn-yellow" style="flex: 2;" onclick="App.snap()">CAPTURAR</button>
             </div>
         </section>
 
-        <!-- TELA DE REVISÃO -->
+        <!-- REVISÃO DA FOTO -->
         <section id="screen-review" class="screen">
-            <h2>Revisar Fotografia</h2>
-            <p class="subtitle">A foto atendeu ao desafio?</p>
+            <h1 class="arcade-title" style="font-size: 1.3rem;">CONFIRMAR FOTO</h1>
+            <p class="subtitle">Sua imagem atende ao desafio?</p>
 
-            <img id="review-img" class="photo-preview" src="" alt="Captura">
+            <div style="flex: 1; background: #000; border-radius: var(--radius-main); overflow: hidden; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                <img id="review-target" src="" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
 
-            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn btn-green" onclick="App.confirmPhoto()">✓ Confirmar & Pontuar (+50 Bônus)</button>
-                <button class="btn btn-outline" onclick="App.openCamera()">↻ Tirar Outra Foto</button>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn-game btn-green" onclick="App.confirmSnap()">✓ Validar Foto (+100 Bônus)</button>
+                <button class="btn-game btn-subtle" onclick="App.openCam()">↻ Refazer Foto</button>
             </div>
         </section>
 
-        <!-- TELA DE RESULTADOS FINAL -->
+        <!-- RELATÓRIO FINAL DA PARTIDA -->
         <section id="screen-results" class="screen">
-            <h1>Expedição Concluída!</h1>
+            <h1 class="arcade-title">FIM DA CAÇADA!</h1>
             <p class="subtitle" id="res-rank">Classificação: EXPLORADOR VISUAL</p>
 
-            <div class="hud" style="margin-bottom: 20px;">
-                <div class="hud-card">
-                    <span class="hud-title">Pontuação</span>
-                    <span class="hud-val" id="res-score" style="color: var(--accent-yellow);">0</span>
+            <div class="hud-grid" style="margin-bottom: 16px;">
+                <div class="hud-box">
+                    <span class="lbl">Pontuação Total</span>
+                    <span class="val" id="res-score" style="color: var(--neon-yellow);">0</span>
                 </div>
-                <div class="hud-card">
-                    <span class="hud-title">Maior Combo</span>
-                    <span class="hud-val" id="res-combo">x1</span>
+                <div class="hud-box">
+                    <span class="lbl">Maior Combo</span>
+                    <span class="val" id="res-combo" style="color: var(--neon-magenta);">x1</span>
                 </div>
-                <div class="hud-card">
-                    <span class="hud-title">Tempo Total</span>
-                    <span class="hud-val" id="res-time">00:00</span>
+                <div class="hud-box">
+                    <span class="lbl">Concluídos</span>
+                    <span class="val" id="res-count">0</span>
                 </div>
             </div>
 
-            <h2 style="margin-bottom: 12px;">Sua Galeria Visual</h2>
-            <div class="gallery-grid" id="res-gallery"></div>
+            <h2 style="font-size: 0.9rem; color: var(--neon-cyan); margin-bottom: 8px; text-transform: uppercase;">Galeria da Expedição</h2>
+            <div class="gallery-container" id="res-gallery-grid"></div>
 
-            <button class="btn btn-primary" style="margin-top: auto;" onclick="App.showScreen('screen-home')">Menu Principal</button>
-        </section>
-
-        <!-- TELA DE CONQUISTAS -->
-        <section id="screen-achievements" class="screen">
-            <h2>Conquistas</h2>
-            <p class="subtitle">Seu histórico de exploração visual</p>
-            <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;" id="achievements-container"></div>
-            <button class="btn btn-outline" style="margin-top: auto;" onclick="App.showScreen('screen-home')">Voltar</button>
+            <button class="btn-game btn-yellow" style="margin-top: auto;" onclick="App.showScreen('screen-menu')">Menu Principal</button>
         </section>
     </div>
 
     <script>
-        /* --- BANCO DE DADOS DE DESAFIOS & GERADOR PROCEDURAL --- */
-        const DB = {
-            base: [
-                { texto: "Fotografe algo vermelho que pareça fora de lugar.", cat: "Cores & Humor", diff: "medio", pts: 200 },
-                { texto: "Encontre uma sombra que pareça ter vida própria.", cat: "História", diff: "dificil", pts: 300 },
-                { texto: "Fotografe algo muito antigo ao lado de algo muito novo.", cat: "Composição", diff: "medio", pts: 200 },
-                { texto: "Encontre um objeto com formato que lembra um rosto humano.", cat: "Humor", diff: "facil", pts: 150 },
-                { texto: "Tire uma foto que pareça uma cena de filme de suspense.", cat: "Cinema", diff: "dificil", pts: 300 },
-                { texto: "Fotografe algo perfeitamente simétrico.", cat: "Formas", diff: "facil", pts: 100 },
-                { texto: "Fotografe um detalhe da natureza que quase ninguém repararia.", cat: "Natureza", diff: "medio", pts: 200 },
-                { texto: "Capture algo refletido em uma poça, espelho ou vidro.", cat: "Perspectiva", diff: "medio", pts: 200 },
-                { texto: "Fotografe algo bonito em um lugar esteticamente feio.", cat: "Perspectiva", diff: "dificil", pts: 300 },
-                { texto: "Fotografe um objeto comum de um ângulo rasante de baixo para cima.", cat: "Perspectiva", diff: "facil", pts: 150 }
-            ],
-            // Matriz para geração de milhares de frases procedurais
-            matrix: {
-                objetos: ["um carro", "uma planta", "uma porta", "um objeto quebrado", "uma cadeira", "uma ferramenta", "uma lâmpada", "uma janela"],
-                cores: ["completamente azul", "com detalhes em amarelo", "de cor vermelha intensa", "com tom escuro e misterioso"],
-                estilos: ["visto através de um reflexo", "com uma iluminação dramática", "que pareça abandonado há anos", "que pareça estar te observando", "criando uma ilusão de ótica"]
+        /* --- MATRIZ GERADORA DE DESAFIOS DINÂMICOS --- */
+        const Generator = {
+            objetos: ["Uma porta ou janela", "Um meio de transporte", "Um objeto de metal", "Uma planta ou flor", "Algo de vidro", "Uma ferramenta", "Um calçado", "Uma cadeira ou assento", "Um livro ou papel", "Um dispositivo eletrônico"],
+            iluminacao: ["sob luz solar direta", "imerso em sombras profundas", "com iluminação dramática", "com um brilho metálico ou reflexo", "sob luz fraca ou suave"],
+            angulos: ["fotografado de baixo para cima", "visto de um ângulo rasante", "através de uma moldura natural", "visto através de um espelho/reflexo", "com enquadramento bem próximo (Macro)"],
+            conceitos: ["que pareça abandonado", "que lembre uma figura humana ou rosto", "que pareça fora de lugar", "que passe uma sensação de mistério", "com cores contrastantes", "que conte uma história em silêncio"],
+
+            build() {
+                const isComplex = Math.random() > 0.3;
+                const obj = this.objetos[Math.floor(Math.random() * this.objetos.length)];
+                
+                if (isComplex) {
+                    const ang = this.angulos[Math.floor(Math.random() * this.angulos.length)];
+                    const con = this.conceitos[Math.floor(Math.random() * this.conceitos.length)];
+                    return {
+                        cat: "COMBINAÇÃO CRIATIVA",
+                        text: `Fotografe ${obj.toLowerCase()}, ${ang}, ${con}.`,
+                        pts: 250
+                    };
+                } else {
+                    const ilu = this.iluminacao[Math.floor(Math.random() * this.iluminacao.length)];
+                    return {
+                        cat: "OBSERVAÇÃO RÁPIDA",
+                        text: `Encontre ${obj.toLowerCase()} ${ilu}.`,
+                        pts: 150
+                    };
+                }
             }
         };
 
-        const ACHIEVEMENTS = [
-            { id: "FIRST", title: "Olho Atento", desc: "Concluiu seu primeiro desafio fotográfico.", icon: "🎯" },
-            { id: "NO_PHOTO", title: "Fotógrafo Conceitual", desc: "Concluiu um desafio usando câmera externa / sem foto.", icon: "🏷️" },
-            { id: "SPEED", title: "Flash Visual", desc: "Completou um desafio em menos de 15 segundos.", icon: "⚡" },
-            { id: "COMBO_3", title: "Em Chamas", desc: "Alcançou um combo
+        /* --- MOTOR DO JOGO --- */
+        const App = {
+            config: { rounds: 5 },
+            session: { round: 0, score: 0, combo: 1, maxCombo: 1, history: [], current: null },
+            camStream: null,
+
+            showScreen(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            },
+
+            setupGame(mode) {
+                document.getElementById('config-subtitle').innerText = mode === 'surpresa' ? 'Modo Surpresa' : 'Modo Caçada Livre';
+                this.showScreen('screen-config');
+            },
+
+            setCfg(key, val, el) {
+                this.config[key] = val;
+                document.querySelectorAll(`.cfg-${key}`).forEach(b => b.style.borderColor = 'rgba(255,255,255,0.15)');
+                el.style.borderColor = 'var(--neon-cyan)';
+            },
+
+            startSession() {
+                this.session = { round: 0, score: 0, combo: 1, maxCombo: 1, history: [], current: null };
+                this.showScreen('screen-gameplay');
+                this.nextTurn();
+            },
+
+            nextTurn() {
+                this.session.round++;
+                if (this.session.round > this.config.rounds) {
+                    this.endGame();
+                    return;
+                }
+
+                this.session.current = Generator.build();
+                
+                document.getElementById('hud-mira').innerText = `${this.session.round}/${this.config.rounds}`;
+                document.getElementById('hud-score').innerText = this.session.score;
+                document.getElementById('hud-combo').innerText = `x${this.session.combo}`;
+                
+                document.getElementById('card-cat-text').innerText = this.session.current.cat;
+                document.getElementById('card-main-text').innerText = `"${this.session.current.text}"`;
+            },
+
+            skipMission() {
+                this.session.combo = 1;
+                this.triggerToast("Missão Pulada! Combo resetado.");
+                this.nextTurn();
+            },
+
+            completeManual() {
+                this.processTurn(null);
+            },
+
+            /* Câmera */
+            async openCam() {
+                try {
+                    this.camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                    document.getElementById('cam-viewport').srcObject = this.camStream;
+                    this.showScreen('screen-cam');
+                } catch (e) {
+                    alert("Câmera indisponível. Utilize a opção 'Concluir sem foto'.");
+                }
+            },
+
+            closeCam() {
+                if (this.camStream) this.camStream.getTracks().forEach(t => t.stop());
+                this.showScreen('s
