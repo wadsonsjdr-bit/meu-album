@@ -60,7 +60,6 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
 
         body {
@@ -74,7 +73,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* CONTAINER SIMULANDO APP MOBILE NO DESKTOP */
         #app-container {
             width: 100%;
             max-width: 480px;
@@ -85,10 +83,10 @@
             position: relative;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
             padding-top: var(--safe-top);
-            padding-bottom: calc(var(--safe-bottom) + 70px);
+            padding-bottom: calc(var(--safe-bottom) + 80px);
         }
 
-        /* HEADER & NAVBAR */
+        /* HEADER */
         .app-header {
             padding: 16px 20px;
             display: flex;
@@ -99,7 +97,6 @@
             top: 0;
             z-index: 100;
             border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(10px);
         }
 
         .brand-logo {
@@ -114,11 +111,6 @@
 
         .brand-logo span {
             color: var(--accent);
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 12px;
         }
 
         .icon-btn {
@@ -175,13 +167,14 @@
             width: 22px;
             height: 22px;
             fill: currentColor;
+            pointer-events: none;
         }
 
         .nav-item.active {
             color: var(--accent);
         }
 
-        /* SCREEN MANAGEMENT */
+        /* SCREENS */
         .screen {
             display: none;
             padding: 20px;
@@ -198,7 +191,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* TYPOGRAPHY & GENERAL UTILS */
+        /* TYPOGRAPHY */
         h1, h2, h3 { line-height: 1.2; font-weight: 700; }
         h1 { font-size: 1.8rem; margin-bottom: 8px; }
         h2 { font-size: 1.3rem; margin-bottom: 12px; }
@@ -263,7 +256,13 @@
             transform: scale(0.98);
         }
 
-        /* CARDS & LISTS */
+        .btn-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        /* CARDS */
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border);
@@ -274,11 +273,6 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .card:active {
-            border-color: var(--border-light);
-            transform: translateY(-2px);
-        }
-
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -286,7 +280,6 @@
             margin-bottom: 10px;
         }
 
-        /* HOME SCREEN STYLES */
         .hero-banner {
             background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
             border: 1px solid var(--border);
@@ -295,19 +288,6 @@
             margin-bottom: 24px;
             position: relative;
             overflow: hidden;
-        }
-
-        .hero-banner::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 150px;
-            height: 150px;
-            background: var(--accent-glow);
-            border-radius: 50%;
-            filter: blur(40px);
-            pointer-events: none;
         }
 
         .hero-title {
@@ -343,7 +323,6 @@
             text-transform: uppercase;
         }
 
-        /* NARRATIVE/MISSION DISPLAY */
         .story-container {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -376,9 +355,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .hint-box {
@@ -390,7 +366,7 @@
             margin-top: 10px;
         }
 
-        /* ALBUM EDITOR & VIEW */
+        /* ALBUM GRID */
         .album-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -405,6 +381,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
 
         .album-cover-placeholder {
@@ -455,13 +432,13 @@
             margin-bottom: 10px;
         }
 
-        /* PRESENTATION MODE */
+        /* PRESENTATION VIEW */
         .presentation-view {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: #000000;
             z-index: 2000;
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -475,7 +452,6 @@
             object-fit: contain;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .pres-text {
@@ -495,25 +471,21 @@
             align-items: center;
         }
 
-        /* MODAL & OVERLAYS */
+        /* MODALS */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(5px);
             z-index: 1500;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
         }
 
         .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
+            display: flex;
         }
 
         .modal-content {
@@ -526,7 +498,6 @@
             text-align: center;
         }
 
-        /* ACHIEVEMENTS GRID */
         .achievements-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -543,7 +514,6 @@
             padding: 14px;
             opacity: 0.5;
             filter: grayscale(1);
-            transition: var(--transition);
         }
 
         .achieve-card.unlocked {
@@ -563,11 +533,6 @@
             justify-content: center;
         }
 
-        .achieve-info {
-            text-align: left;
-        }
-
-        /* FORM ELEMENTS */
         .form-group {
             margin-bottom: 16px;
             text-align: left;
@@ -590,7 +555,6 @@
             font-size: 0.95rem;
         }
 
-        /* TOAST NOTIFICATION */
         #toast {
             position: fixed;
             top: calc(var(--safe-top) + 20px);
@@ -609,6 +573,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            pointer-events: none;
         }
 
         #toast.show {
@@ -625,11 +590,9 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 <span>APERTA</span>
             </div>
-            <div class="nav-actions">
-                <button class="icon-btn" id="theme-toggle-btn" aria-label="Alternar Tema">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
-            </div>
+            <button class="icon-btn" id="theme-toggle-btn" aria-label="Alternar Tema">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
         </header>
 
         <!-- TELA 1: HOME -->
@@ -659,4 +622,23 @@
                 </div>
             </div>
 
-            <div id="active-story-card" style="display: none;" cla
+            <div id="active-story-card" style="display: none;" class="card">
+                <div class="card-header">
+                    <span class="badge badge-accent">Em Andamento</span>
+                </div>
+                <h3 id="active-story-title">Título da História</h3>
+                <p id="active-story-sub" style="font-size: 0.85rem; margin-bottom: 12px;">Progresso atual...</p>
+                <button class="btn btn-primary" onclick="App.resumeStory()">Continuar História</button>
+            </div>
+
+            <div class="card" style="background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary));">
+                <h3>Desafio Rápido</h3>
+                <p style="font-size: 0.85rem;">Tem apenas alguns minutos? Gere missões fotográficas instantâneas para exercitar seu olhar.</p>
+                <button class="btn btn-secondary" onclick="App.navigateTo('screen-quick-challenge')">Iniciar Desafio Rápido</button>
+            </div>
+        </section>
+
+        <!-- TELA 2: LISTA DE HISTÓRIAS -->
+        <section id="screen-stories" class="screen">
+            <h2>Histórias Disponíveis</h2>
+            <p>Escolha uma narrativ
