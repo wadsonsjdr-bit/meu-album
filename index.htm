@@ -3,826 +3,390 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Meu Álbum de Memórias</title>
+  <meta name="theme-color" content="#f8f6f0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Álbum Pessoal</title>
+
+  <!-- Favicons e Apple Touch Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
+
   <style>
     :root {
-      --bg: #FDFBF7;
-      --surface: #FFFFFF;
-      --surface-subtle: #F3EFE6;
-      --text: #332C27;
-      --text-sub: #7A7268;
-      --accent: #E29578;
-      --accent-hover: #D88364;
-      --border: #E8E2D5;
-      --radius: 18px;
-      --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      --flash-color: rgba(255, 255, 255, 0.8);
+      --bg-main: #f8f6f0;
+      --surface: #ffffff;
+      --surface-subtle: #f0ede6;
+      --text-primary: #1c1a17;
+      --text-secondary: #706c64;
+      --accent: #2c2a29;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --radius-lg: 20px;
+      --radius-md: 12px;
     }
 
-    /* Temas Personalizáveis */
-    body.theme-warm {
-      --bg: #FDFBF7;
-      --surface: #FFFFFF;
-      --surface-subtle: #F3EFE6;
-      --text: #332C27;
-      --text-sub: #7A7268;
-      --accent: #E29578;
-      --border: #E8E2D5;
-    }
-
-    body.theme-cozy {
-      --bg: #F4F1EA;
-      --surface: #FFFFFF;
-      --surface-subtle: #E3DDD3;
-      --text: #2C3531;
-      --text-sub: #636E6A;
-      --accent: #84A59D;
-      --border: #D5CEC3;
-    }
-
-    body.theme-lavender {
-      --bg: #F8F6FA;
-      --surface: #FFFFFF;
-      --surface-subtle: #ECE6F2;
-      --text: #2B2533;
-      --text-sub: #6F687A;
-      --accent: #B58A8F;
-      --border: #E2D9E8;
-    }
-
-    body.theme-sunset {
-      --bg: #FFF8F5;
-      --surface: #FFFFFF;
-      --surface-subtle: #FFEAE2;
-      --text: #3D2B28;
-      --text-sub: #82635E;
-      --accent: #F28482;
-      --border: #F3D5CE;
+    @media (prefers-color-scheme: dark) {
+      :root.auto-dark {
+        --bg-main: #121212;
+        --surface: #1e1e1e;
+        --surface-subtle: #2c2c2c;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+        --accent: #ffffff;
+        --border-color: rgba(255, 255, 255, 0.1);
+      }
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0; padding: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      transition: background-color 0.3s, color 0.3s;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
     }
 
-    #app {
-      max-width: 800px;
+    #album {
+      width: 100%;
+      max-width: 960px;
       margin: 0 auto;
-      padding: env(safe-area-inset-top, 20px) 16px 100px;
+      padding: env(safe-area-inset-top, 20px) 20px calc(env(safe-area-inset-bottom, 20px) + 80px);
     }
 
-    /* Topo Acolhedor */
-    .header {
-      text-align: center;
-      padding: 24px 16px 16px;
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--card-shadow);
-      margin-bottom: 20px;
-      border: 1px solid var(--border);
+    /* Trava de Segurança por PIN */
+    #lock-screen {
+      position: fixed; inset: 0; background: var(--bg-main); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
     }
-    .title { font-size: 24px; font-weight: 700; margin: 0; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .subtitle { font-size: 13px; color: var(--text-sub); margin-top: 6px; }
+    .pin-input { font-size: 24px; letter-spacing: 12px; text-align: center; width: 160px; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--surface); color: var(--text-primary); outline: none; margin-top: 15px; }
 
-    /* Barra de Temas e Ações */
-    .theme-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    /* Navegação por Abas */
+    .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer; border-radius: var(--radius-md); }
+    .tab-btn.active { background: var(--surface); color: var(--text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-    .theme-picker {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      background: var(--surface);
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--text-sub);
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    .theme-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .theme-dot:hover { transform: scale(1.15); }
-    .theme-dot.active { border-color: var(--text); }
-    .dot-warm { background: #E29578; }
-    .dot-cozy { background: #84A59D; }
-    .dot-lavender { background: #B58A8F; }
-    .dot-sunset { background: #F28482; }
+    /* Elementos Visuais da Galeria */
+    .al-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .al-brand { display: flex; align-items: center; gap: 10px; }
+    .al-logo-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid var(--surface); }
+    .al-author { font-size: 12px; font-weight: 700; color: var(--text-primary); }
 
-    .btn-action-main {
-      background: var(--accent);
-      color: #FFF;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.1s, background-color 0.2s;
-    }
-    .btn-action-main:active { transform: scale(0.96); }
+    .al-header { padding: 8px 0 16px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px; }
+    .al-title { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; outline: none; }
+    .al-sub { font-size: 14px; color: var(--text-secondary); outline: none; }
 
-    /* Filtros / Categorias */
-    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
-    .chips::-webkit-scrollbar { display: none; }
-    .chip {
-      padding: 8px 16px;
-      border-radius: 20px;
-      background: var(--surface);
-      color: var(--text-sub);
-      border: 1px solid var(--border);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .chip.active { background: var(--accent); color: #FFF; border-color: var(--accent); font-weight: 600; }
+    .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
+    .chip { padding: 6px 14px; border-radius: 20px; background: var(--surface); color: var(--text-secondary); font-size: 12px; font-weight: 600; border: 1px solid var(--border-color); cursor: pointer; white-space: nowrap; }
+    .chip.active { background: var(--accent); color: var(--bg-main); border-color: var(--accent); }
 
-    /* Grade Estilo Polaroid / Álbum Pessoal */
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    .al-search-input, .al-input, .al-select { width: 100%; padding: 12px 14px; font-size: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface); color: var(--text-primary); outline: none; margin-bottom: 10px; }
 
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 10px 10px 14px;
-      border: 1px solid var(--border);
-      box-shadow: var(--card-shadow);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .al-actions { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .btn { padding: 12px; border: 1px solid transparent; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface); color: var(--text-primary); transition: transform 0.15s ease; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: var(--bg-main); }
+    .btn-outlined { border-color: var(--border-color); }
 
-    .photo-box {
-      width: 100%;
-      aspect-ratio: 1/1;
-      background: var(--surface-subtle);
-      border-radius: calc(var(--radius) - 6px);
-      overflow: hidden;
-      position: relative;
-    }
-    .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    #al-file, #al-restore-file { display: none; }
 
-    .card-content { padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
-    .card-caption { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .card-location { font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 4px; }
-    
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--text-sub);
-    }
-    .like-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 2px 6px;
-      border-radius: 12px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: transform 0.15s;
-    }
-    .like-btn.liked { color: #E53935; }
-    .like-btn:active { transform: scale(1.3); }
+    /* Grade de Fotos */
+    .al-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (min-width: 601px) { .al-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+    @media (min-width: 901px) { .al-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 
-    /* Modal / Carrossel com Flash & Transição */
-    .modal-bg {
-      position: fixed;
-      inset: 0;
-      background: rgba(30, 25, 22, 0.85);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-      padding: 16px;
-    }
-    .modal-bg.open { opacity: 1; pointer-events: auto; }
+    .al-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); cursor: pointer; position: relative; }
+    .al-photo-wrapper { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: var(--surface-subtle); }
+    .al-photo { width: 100%; height: 100%; object-fit: cover; }
+    .al-card-fav { position: absolute; top: 8px; right: 8px; font-size: 16px; color: #e53935; }
+    .al-info { padding: 10px; }
+    .al-cap { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .modal-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 16px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    /* Pinch-to-zoom Container */
+    .zoom-container { overflow: hidden; touch-action: none; display: flex; justify-content: center; align-items: center; }
+    .zoom-container img { transition: transform 0.1s ease-out; transform-origin: center center; }
 
-    .modal-photo-wrapper {
-      position: relative;
-      width: 100%;
-      max-height: 380px;
-      border-radius: calc(var(--radius) - 4px);
-      overflow: hidden;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    /* Modais */
+    .al-modal-bg { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .al-modal-bg.open { opacity: 1; pointer-events: auto; }
+    .al-modal { background: var(--surface); width: 100%; max-width: 600px; padding: 20px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 90vh; overflow-y: auto; }
+    @media (min-width: 601px) { .al-modal { border-radius: var(--radius-lg); margin: auto; } .al-modal-bg { align-items: center; } }
 
-    .modal-photo-wrapper img {
-      width: 100%;
-      max-height: 380px;
-      object-fit: contain;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
+    /* Modo Livro */
+    .book-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .book-modal-bg.open { opacity: 1; pointer-events: auto; }
+    .book-header { padding: 16px 20px; display: flex; justify-content: space-between; color: #fff; }
+    .book-viewport { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .book-page { background: var(--surface); width: 100%; max-width: 480px; border-radius: var(--radius-lg); padding: 20px; text-align: center; color: var(--text-primary); }
 
-    /* Efeito de Flash na Transição */
-    .flash-overlay {
-      position: absolute;
-      inset: 0;
-      background: #FFF;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 10;
-    }
-    .flash-overlay.active {
-      animation: cameraFlash 0.3s ease-out;
-    }
-
-    @keyframes cameraFlash {
-      0% { opacity: 0.85; }
-      100% { opacity: 0; }
-    }
-
-    /* Botões de Navegação do Carrossel */
-    .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.85);
-      border: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 18px;
-      color: #333;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      z-index: 5;
-      transition: transform 0.15s, background-color 0.2s;
-    }
-    .nav-arrow:hover { background: #FFF; transform: translateY(-50%) scale(1.08); }
-    .nav-arrow.prev { left: 10px; }
-    .nav-arrow.next { right: 10px; }
-
-    .modal-info { display: flex; flex-direction: column; gap: 4px; }
-    .modal-caption { font-weight: 700; font-size: 16px; color: var(--text); }
-    .modal-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 12px; align-items: center; }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .btn-secondary {
-      flex: 1;
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface-subtle);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background-color 0.2s;
-    }
-    .btn-secondary:hover { background: var(--border); }
-
-    /* Modais Pequenos (Compartilhar e Adicionar) */
-    .dialog-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      padding: 16px;
-    }
-    .dialog-overlay.open { opacity: 1; pointer-events: auto; }
-    .dialog-box {
-      background: var(--surface);
-      padding: 20px;
-      border-radius: var(--radius);
-      width: 100%;
-      max-width: 400px;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-    .dialog-title { font-size: 18px; font-weight: 700; margin: 0 0 12px; }
-    
-    .input-field {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--surface-subtle);
-      color: var(--text);
-      font-size: 13px;
-      margin-bottom: 12px;
-      outline: none;
-    }
-    .input-field:focus { border-color: var(--accent); }
-
-    .permission-options { display: flex; gap: 10px; margin-bottom: 16px; }
-    .perm-card {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      cursor: pointer;
-      text-align: center;
-      font-size: 12px;
-      background: var(--surface-subtle);
-      transition: all 0.2s;
-    }
-    .perm-card.selected { border-color: var(--accent); background: var(--surface); font-weight: 700; color: var(--accent); }
-
-    /* Animação Fade In das Fotos */
-    .fade-in {
-      animation: fadeIn 0.25s ease-in-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0.3; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
-    }
+    .al-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text-primary); color: var(--surface); padding: 10px 20px; border-radius: 30px; font-size: 12px; transition: transform 0.3s ease; z-index: 4000; }
+    .al-toast.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
-<body class="theme-warm">
+<body>
 
-<div id="app">
-
-  <!-- Cabeçalho Afetuoso -->
-  <div class="header">
-    <h1 class="title">📸 Meu Álbum de Memórias</h1>
-    <p class="subtitle">Um cantinho seguro e organizado para guardar meus momentos especiais</p>
-  </div>
-
-  <!-- Barra de Temas e Ações -->
-  <div class="theme-bar">
-    <div class="theme-picker">
-      <span>Cores:</span>
-      <div class="theme-dot dot-warm active" title="Quentinho" onclick="setTheme('warm', this)"></div>
-      <div class="theme-dot dot-cozy" title="Achegado" onclick="setTheme('cozy', this)"></div>
-      <div class="theme-dot dot-lavender" title="Lavanda" onclick="setTheme('lavender', this)"></div>
-      <div class="theme-dot dot-sunset" title="Pôr do Sol" onclick="setTheme('sunset', this)"></div>
-    </div>
-
-    <div style="display: flex; gap: 8px;">
-      <button class="btn-action-main" style="background: var(--surface-subtle); color: var(--text);" onclick="openShareDialog()">
-        🔗 Compartilhar
-      </button>
-      <button class="btn-action-main" onclick="openAddPhotoDialog()">
-        ➕ Nova Foto
-      </button>
-    </div>
-  </div>
-
-  <!-- Filtros por Categorias -->
-  <div class="chips">
-    <button class="chip active" onclick="filterPhotos('all', this)">Todas as Memórias</button>
-    <button class="chip" onclick="filterPhotos('favs', this)">❤️ Curtidas</button>
-    <button class="chip" onclick="filterPhotos('Viagens', this)">✈️ Viagens</button>
-    <button class="chip" onclick="filterPhotos('Família', this)">🏠 Família</button>
-    <button class="chip" onclick="filterPhotos('Amigos', this)">🎉 Amigos</button>
-    <button class="chip" onclick="filterPhotos('Cotidiano', this)">☕ Cotidiano</button>
-  </div>
-
-  <!-- Grade do Álbum -->
-  <div class="grid" id="photo-grid"></div>
-
+<!-- Tela de Segurança por PIN (Opcional) -->
+<div id="lock-screen" style="display: none;">
+  <div style="font-size: 18px; font-weight: 700;">Álbum Protegido</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Digite seu PIN de 4 dígitos</div>
+  <input type="password" id="pin-entry" class="pin-input" maxlength="4" autofocus>
 </div>
 
-<!-- Modal Visualizador / Carrossel com Efeito Flash e Sons -->
-<div class="modal-bg" id="photo-modal" onclick="closeModalOnBg(event)">
-  <div class="modal-card">
-    <div class="modal-photo-wrapper">
-      <div class="flash-overlay" id="flash-effect"></div>
-      <button class="nav-arrow prev" onclick="navigatePhoto(-1)">‹</button>
-      <img id="modal-img" src="" class="fade-in" alt="Foto Ampliada">
-      <button class="nav-arrow next" onclick="navigatePhoto(1)">›</button>
-    </div>
-
-    <div class="modal-info">
-      <div class="modal-caption" id="modal-caption"></div>
-      <div class="modal-meta">
-        <span id="modal-location">📍 Localização</span>
-        <span>•</span>
-        <span id="modal-category">Categoria</span>
+<div id="album">
+  <!-- Topo -->
+  <div class="al-top-bar">
+    <div class="al-brand">
+      <img class="al-logo-img" id="app-logo" alt="Logo">
+      <div style="display: flex; flex-direction: column;">
+        <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600;">Galeria Pessoal</span>
+        <span class="al-author">By.Wadson</span>
       </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn-secondary" id="modal-like-btn" onclick="toggleLikeCurrent()">
-        ❤️ Curtir
-      </button>
-      <button class="btn-secondary" onclick="openShareDialog()">
-        🔗 Compartilhar
-      </button>
-      <button class="btn-secondary" onclick="closeModal()">
-        Fechar
-      </button>
     </div>
   </div>
-</div>
 
-<!-- Modal Compartilhar -->
-<div class="dialog-overlay" id="share-dialog">
-  <div class="dialog-box">
-    <h3 class="dialog-title">🔗 Compartilhar Álbum</h3>
-    <p style="font-size: 12px; color: var(--text-sub); margin-top:0;">Escolha quem pode ver ou ajudar a organizar suas fotos:</p>
-    
-    <label style="font-size: 12px; font-weight:600; display:block; margin-bottom:4px;">Nível de Acesso:</label>
-    <div class="permission-options">
-      <div class="perm-card selected" id="perm-view" onclick="selectPerm('view')">
-        👀 Apenas Ver
-      </div>
-      <div class="perm-card" id="perm-edit" onclick="selectPerm('edit')">
-        ✏️ Permissão para Editar
-      </div>
+  <!-- Navegação por Abas -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="tab-galeria">📷 Galeria</button>
+    <button class="tab-btn" data-tab="tab-pastas">📁 Álbuns</button>
+    <button class="tab-btn" data-tab="tab-ajustes">⚙️ Ajustes</button>
+  </div>
+
+  <!-- ABA 1: GALERIA -->
+  <div class="tab-content active" id="tab-galeria">
+    <div class="al-header">
+      <div class="al-title" id="al-title" contenteditable="true">Minhas Memórias</div>
+      <div class="al-sub" id="al-sub" contenteditable="true">Toque aqui para alterar o subtítulo</div>
     </div>
 
-    <label style="font-size: 12px; font-weight:600; display:block; margin-bottom:4px;">Link Seguro do Álbum:</label>
-    <input type="text" class="input-field" id="share-link-input" readonly value="https://meualbum.app/v/memorias-privadas-883">
+    <!-- Filtros e Busca -->
+    <div class="filter-bar" id="filter-bar">
+      <button class="chip active" data-filter="all">Todas</button>
+      <button class="chip" data-filter="favs">♥ Favoritas</button>
+      <button class="chip" data-filter="tag-Viagem">Viagem</button>
+      <button class="chip" data-filter="tag-Família">Família</button>
+      <button class="chip" data-filter="tag-Retrato">Retrato</button>
+      <button class="chip" data-filter="tag-Pessoal">Pessoal</button>
+    </div>
 
-    <div style="display: flex; gap: 8px;">
-      <button class="btn-action-main" style="flex:1;" onclick="copyShareLink()">📋 Copiar Link</button>
-      <button class="btn-secondary" style="flex:1;" onclick="closeShareDialog()">Cancelar</button>
+    <input type="text" id="al-search" class="al-search-input" placeholder="🔍 Buscar por legenda, local ou tag...">
+
+    <!-- Ações e Ordenação -->
+    <div class="al-actions">
+      <button class="btn btn-primary" id="al-open-picker"> Nova Foto</button>
+      <select id="al-sort" class="al-select" style="margin-bottom:0;">
+        <option value="newest">Mais Recentes</option>
+        <option value="oldest">Mais Antigas</option>
+        <option value="az">A-Z Legenda</option>
+      </select>
+      <button class="btn btn-outlined" id="al-open-book">📖 Livro</button>
+    </div>
+
+    <div style="font-size: 12px; color: var(--text-secondary); margin: 12px 0;" id="al-count">0 fotos salvas</div>
+    <div class="al-grid" id="al-grid"></div>
+  </div>
+
+  <!-- ABA 2: ÁLBUNS / PASTAS -->
+  <div class="tab-content" id="tab-pastas">
+    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+      <input type="text" id="new-folder-name" class="al-input" placeholder="Nome do novo álbum..." style="margin-bottom:0;">
+      <button class="btn btn-primary" id="add-folder-btn">Criar Pasta</button>
+    </div>
+    <div id="folders-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;"></div>
+  </div>
+
+  <!-- ABA 3: AJUSTES -->
+  <div class="tab-content" id="tab-ajustes">
+    <div style="background: var(--surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
+      <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">🔒 Segurança</div>
+      <label style="font-size: 13px; display: block; margin-bottom: 8px;">
+        PIN de Acesso (Deixe em branco para desativar):
+      </label>
+      <input type="password" id="set-pin-input" class="al-input" placeholder="Ex: 1234" maxlength="4">
+      <button class="btn btn-outlined" id="save-pin-btn">Salvar PIN</button>
+    </div>
+
+    <div style="background: var(--surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
+      <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">🖼️ Qualidade das Fotos</div>
+      <select id="compression-quality" class="al-select" style="margin-bottom:0;">
+        <option value="0.85">Alta Qualidade (Maior espaço)</option>
+        <option value="0.65" selected>Equilibrado (Recomendado)</option>
+        <option value="0.45">Economia de Espaço (Baixa resolução)</option>
+      </select>
+    </div>
+
+    <div style="background: var(--surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+      <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">💾 Backup e Dados</div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-outlined" id="al-backup-btn" style="flex:1;">Exportar JSON</button>
+        <button class="btn btn-outlined" id="al-restore-btn" style="flex:1;">Importar JSON</button>
+      </div>
     </div>
   </div>
+
+  <input type="file" id="al-file" accept="image/*">
+  <input type="file" id="al-restore-file" accept=".json">
 </div>
 
 <!-- Modal Adicionar Foto -->
-<div class="dialog-overlay" id="add-dialog">
-  <div class="dialog-box">
-    <h3 class="dialog-title">📸 Adicionar Nova Memória</h3>
-    
-    <input type="text" id="new-caption" class="input-field" placeholder="Legenda / O que aconteceu?">
-    <input type="text" id="new-location" class="input-field" placeholder="📍 Localização (ex: Praia do Rosa, SC)">
-    
-    <select id="new-category" class="input-field">
-      <option value="Viagens">✈️ Viagens</option>
-      <option value="Família">🏠 Família</option>
-      <option value="Amigos">🎉 Amigos</option>
-      <option value="Cotidiano">☕ Cotidiano</option>
+<div class="al-modal-bg" id="al-modal-bg">
+  <div class="al-modal">
+    <img id="al-preview" style="width: 100%; max-height: 240px; object-fit: contain; border-radius: var(--radius-md); margin-bottom: 10px;">
+    <input class="al-input" id="al-caption" placeholder="Legenda da foto...">
+    <input class="al-input" id="al-location" placeholder="📍 Localização (opcional)">
+    <select class="al-select" id="al-tag">
+      <option value="">Selecione uma Categoria/Tag</option>
+      <option value="Viagem">Viagem</option>
+      <option value="Família">Família</option>
+      <option value="Retrato">Retrato</option>
+      <option value="Pessoal">Pessoal</option>
     </select>
-
-    <input type="text" id="new-url" class="input-field" placeholder="Link da imagem (ou deixe em branco para padrão)">
-
-    <div style="display: flex; gap: 8px; margin-top: 8px;">
-      <button class="btn-action-main" style="flex:1;" onclick="addNewPhoto()">Guardar Foto</button>
-      <button class="btn-secondary" style="flex:1;" onclick="closeAddDialog()">Cancelar</button>
+    <select class="al-select" id="al-folder-select">
+      <option value="">Sem Pasta (Raiz)</option>
+    </select>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-outlined" id="al-cancel" style="flex:1">Cancelar</button>
+      <button class="btn btn-primary" id="al-save" style="flex:1">Salvar</button>
     </div>
   </div>
 </div>
 
+<!-- Modal Visualizar com Zoom -->
+<div class="al-modal-bg" id="al-light-bg">
+  <div class="al-modal">
+    <div class="zoom-container" id="zoom-area">
+      <img id="al-light-photo" style="width:100%; max-height:350px; object-fit:contain; border-radius:var(--radius-md);">
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0;">
+      <button class="btn btn-outlined" id="al-fav-btn" style="color:#e53935;">♡ Favoritar</button>
+      <button class="btn btn-outlined" id="al-light-download">💾 Baixar</button>
+    </div>
+    <input class="al-input" id="al-edit-caption" placeholder="Editar legenda...">
+    <input class="al-input" id="al-edit-location" placeholder="📍 Localização">
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-outlined" id="al-light-remove" style="flex:1; color:#e53935;">Excluir</button>
+      <button class="btn btn-primary" id="al-light-save" style="flex:1">Atualizar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Modo Livro -->
+<div class="book-modal-bg" id="book-modal">
+  <div class="book-header">
+    <span>Álbum Digital</span>
+    <button class="btn btn-outlined" id="book-close" style="color:#fff;">Fechar</button>
+  </div>
+  <div class="book-viewport" id="book-viewport">
+    <div class="book-page" id="book-page-content"></div>
+  </div>
+</div>
+
+<div class="al-toast" id="al-toast"></div>
+
 <script>
-  // 🔊 SISTEMA DE ÁUDIO SINTÉTICO AGRADÁVEL (Web Audio API)
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  let audioCtx;
+(function() {
+  let db;
+  const DB_NAME = "AlbumDB_V06";
 
-  function initAudio() {
-    if (!audioCtx) audioCtx = new AudioContext();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-  }
-
-  // Som suave de clique ao trocar abas/temas
-  function playSoftClick() {
-    initAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(450, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.03);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.03);
-  }
-
-  // Som de Câmera/Slide ao passar de foto no carrossel
-  function playPhotoSlideSound() {
-    initAudio();
-    const now = audioCtx.currentTime;
-    // Clique mecânico sutil
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(280, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.05);
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(now); osc.stop(now + 0.05);
-  }
-
-  // Som fofinho ao curtir foto (Tom caloroso)
-  function playWarmLikeSound() {
-    initAudio();
-    const now = audioCtx.currentTime;
-    const notes = [440, 554.37, 659.25]; // A4, C#5, E5 (Triad Maior suave)
-    notes.forEach((freq, idx) => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.04);
-      gain.gain.setValueAtTime(0.15, now + idx * 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.2);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(now + idx * 0.04);
-      osc.stop(now + idx * 0.04 + 0.2);
-    });
-  }
-
-  // Som de Sucesso ao Adicionar Memória Nova
-  function playSuccessSound() {
-    initAudio();
-    const now = audioCtx.currentTime;
-    [523.25, 659.25, 783.99].forEach((freq, idx) => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.06);
-      gain.gain.setValueAtTime(0.15, now + idx * 0.06);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.06 + 0.25);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(now + idx * 0.06);
-      osc.stop(now + idx * 0.06 + 0.25);
-    });
-  }
-
-  // DADOS DAS MEMÓRIAS (Fotos amadoras de momento)
-  let photos = [
-    { id: 1, caption: "Café da manhã de domingo em família", location: "Minas Gerais", category: "Família", liked: true, url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" },
-    { id: 2, caption: "Pôr do sol incrível na praia", location: "Florianópolis, SC", category: "Viagens", liked: true, url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" },
-    { id: 3, caption: "Reunião de velhos amigos de infância", location: "São Paulo, SP", category: "Amigos", liked: false, url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800" },
-    { id: 4, caption: "Cantinho de leitura do meu quarto", location: "Em Casa", category: "Cotidiano", liked: false, url: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800" },
-    { id: 5, caption: "Trilha no parque no final da tarde", location: "Curitiba, PR", category: "Viagens", liked: false, url: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=800" }
-  ];
-
-  let currentFilter = 'all';
-  let filteredPhotos = [...photos];
-  let currentModalIndex = 0;
-  let selectedPerm = 'view';
-
-  // GERENCIAMENTO DE TEMAS
-  function setTheme(themeName, element) {
-    playSoftClick();
-    document.body.className = `theme-${themeName}`;
-    document.querySelectorAll('.theme-dot').forEach(dot => dot.classList.remove('active'));
-    element.classList.add('active');
-  }
-
-  // RENDERIZAÇÃO DA GRADE DE FOTOS
-  function renderPhotos() {
-    const grid = document.getElementById('photo-grid');
-    grid.innerHTML = '';
-
-    if (currentFilter === 'favs') {
-      filteredPhotos = photos.filter(p => p.liked);
-    } else if (currentFilter !== 'all') {
-      filteredPhotos = photos.filter(p => p.category === currentFilter);
-    } else {
-      filteredPhotos = [...photos];
-    }
-
-    filteredPhotos.forEach((photo, index) => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="photo-box">
-          <img src="${photo.url}" alt="${photo.caption}" loading="lazy">
-        </div>
-        <div class="card-content">
-          <div class="card-caption">${photo.caption}</div>
-          <div class="card-location">📍 ${photo.location}</div>
-          <div class="card-footer">
-            <span style="font-size:11px; opacity:0.8;">#${photo.category}</span>
-            <button class="like-btn ${photo.liked ? 'liked' : ''}" onclick="toggleLikeInGrid(event, ${photo.id})">
-              ${photo.liked ? '❤️' : '🤍'}
-            </button>
-          </div>
-        </div>
-      `;
-      card.onclick = (e) => {
-        if (e.target.closest('.like-btn')) return;
-        openModal(index);
+  function initDB() {
+    return new Promise((resolve) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onsuccess = (e) => { db = e.target.result; resolve(); };
+      req.onupgradeneeded = (e) => {
+        let db = e.target.result;
+        if (!db.objectStoreNames.contains("photos")) db.createObjectStore("photos", { keyPath: "id" });
+        if (!db.objectStoreNames.contains("folders")) db.createObjectStore("folders", { keyPath: "id" });
+        if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
       };
-      grid.appendChild(card);
     });
   }
 
-  function filterPhotos(cat, element) {
-    playSoftClick();
-    currentFilter = cat;
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    element.classList.add('active');
-    renderPhotos();
+  function dbSave(store, data) {
+    return new Promise((r) => { const tx = db.transaction(store, "readwrite"); tx.objectStore(store).put(data); tx.oncomplete = () => r(true); });
+  }
+  function dbGetAll(store) {
+    return new Promise((r) => { const tx = db.transaction(store, "readonly"); const req = tx.objectStore(store).getAll(); req.onsuccess = () => r(req.result || []); });
+  }
+  function dbGet(store, key) {
+    return new Promise((r) => { const tx = db.transaction(store, "readonly"); const req = tx.objectStore(store).get(key); req.onsuccess = () => r(req.result ? req.result.value : null); });
+  }
+  function dbDelete(store, key) {
+    return new Promise((r) => { const tx = db.transaction(store, "readwrite"); tx.objectStore(store).delete(key); tx.oncomplete = () => r(true); });
   }
 
-  function toggleLikeInGrid(event, id) {
-    event.stopPropagation();
-    const photo = photos.find(p => p.id === id);
-    if (photo) {
-      photo.liked = !photo.liked;
-      if (photo.liked) playWarmLikeSound();
-      else playSoftClick();
-      renderPhotos();
+  let entries = [], folders = [], pendingImage = null, activePhotoId = null, activeFilter = "all", currentFolderFilter = null;
+
+  const LOGO_DATA = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231c2541'/><circle cx='50' cy='50' r='44' fill='none' stroke='%23ffb703' stroke-width='2'/><path d='M30,65 L50,35 L70,65 Z' fill='%236fffe9'/><circle cx='50' cy='42' r='6' fill='%23ffb703'/><text x='50' y='82' font-size='10' font-weight='bold' fill='%23ffffff' text-anchor='middle' font-family='sans-serif'>By.Wadson</text></svg>";
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    document.getElementById("app-logo").src = LOGO_DATA;
+    document.documentElement.classList.add("auto-dark");
+    await initDB();
+
+    // Trava por PIN
+    const savedPin = await dbGet("settings", "user_pin");
+    if (savedPin) {
+      document.getElementById("lock-screen").style.display = "flex";
+      document.getElementById("pin-entry").addEventListener("input", (e) => {
+        if (e.target.value === savedPin) {
+          document.getElementById("lock-screen").style.display = "none";
+        }
+      });
     }
-  }
 
-  // CARROSSEL E NAVEGAÇÃO COM EFEITO FLASH
-  function openModal(index) {
-    currentModalIndex = index;
-    updateModalContent();
-    document.getElementById('photo-modal').classList.add('open');
-  }
-
-  function updateModalContent() {
-    const photo = filteredPhotos[currentModalIndex];
-    if (!photo) return;
-
-    const img = document.getElementById('modal-img');
-    const flash = document.getElementById('flash-effect');
-
-    // Efeito de Flash na Troca
-    flash.classList.remove('active');
-    void flash.offsetWidth; // Trigger Reflow
-    flash.classList.add('active');
-
-    // Fade in suave na imagem
-    img.classList.remove('fade-in');
-    void img.offsetWidth;
-    img.classList.add('fade-in');
-
-    img.src = photo.url;
-    document.getElementById('modal-caption').innerText = photo.caption;
-    document.getElementById('modal-location').innerText = `📍 ${photo.location}`;
-    document.getElementById('modal-category').innerText = `#${photo.category}`;
-
-    const likeBtn = document.getElementById('modal-like-btn');
-    likeBtn.innerHTML = photo.liked ? '❤️ Curtida' : '🤍 Curtir';
-    likeBtn.style.color = photo.liked ? '#E53935' : 'var(--text)';
-  }
-
-  function navigatePhoto(direction) {
-    playPhotoSlideSound();
-    currentModalIndex += direction;
-    if (currentModalIndex < 0) currentModalIndex = filteredPhotos.length - 1;
-    if (currentModalIndex >= filteredPhotos.length) currentModalIndex = 0;
-    updateModalContent();
-  }
-
-  function toggleLikeCurrent() {
-    const photo = filteredPhotos[currentModalIndex];
-    if (photo) {
-      photo.liked = !photo.liked;
-      if (photo.liked) playWarmLikeSound();
-      else playSoftClick();
-      updateModalContent();
-      renderPhotos();
-    }
-  }
-
-  function closeModal() {
-    playSoftClick();
-    document.getElementById('photo-modal').classList.remove('open');
-  }
-
-  function closeModalOnBg(e) {
-    if (e.target.classList.contains('modal-bg')) closeModal();
-  }
-
-  // DIÁLOGO DE COMPARTILHAMENTO
-  function openShareDialog() {
-    playSoftClick();
-    document.getElementById('share-dialog').classList.add('open');
-  }
-
-  function closeShareDialog() {
-    playSoftClick();
-    document.getElementById('share-dialog').classList.remove('open');
-  }
-
-  function selectPerm(perm) {
-    playSoftClick();
-    selectedPerm = perm;
-    document.getElementById('perm-view').classList.toggle('selected', perm === 'view');
-    document.getElementById('perm-edit').classList.toggle('selected', perm === 'edit');
-    
-    const input = document.getElementById('share-link-input');
-    input.value = perm === 'edit' 
-      ? "https://meualbum.app/v/edit-colab-memorias-992" 
-      : "https://meualbum.app/v/memorias-privadas-883";
-  }
-
-  function copyShareLink() {
-    playSuccessSound();
-    const input = document.getElementById('share-link-input');
-    input.select();
-    navigator.clipboard.writeText(input.value);
-    alert('Link copiado com sucesso! Agora você pode enviar para quem quiser.');
-    closeShareDialog();
-  }
-
-  // DIÁLOGO DE ADICIONAR FOTO
-  function openAddPhotoDialog() {
-    playSoftClick();
-    document.getElementById('add-dialog').classList.add('open');
-  }
-
-  function closeAddDialog() {
-    playSoftClick();
-    document.getElementById('add-dialog').classList.remove('open');
-  }
-
-  function addNewPhoto() {
-    const caption = document.getElementById('new-caption').value || "Minha nova memória";
-    const location = document.getElementById('new-location').value || "Em algum lugar especial";
-    const category = document.getElementById('new-category').value;
-    const urlInput = document.getElementById('new-url').value;
-    const url = urlInput || "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=800";
-
-    const newPhoto = {
-      id: Date.now(),
-      caption,
-      location,
-      category,
-      liked: false,
-      url
-    };
-
-    photos.unshift(newPhoto);
-    playSuccessSound();
-    renderPhotos();
-    closeAddDialog();
-
-    // Limpar formulário
-    document.getElementById('new-caption').value = '';
-    document.getElementById('new-location').value = '';
-    document.getElementById('new-url').value = '';
-  }
-
-  // Suporte a teclas de atalho do teclado (Setas)
-  document.addEventListener('keydown', (e) => {
-    const modal = document.getElementById('photo-modal');
-    if (modal.classList.contains('open')) {
-      if (e.key === 'ArrowLeft') navigatePhoto(-1);
-      if (e.key === 'ArrowRight') navigatePhoto(1);
-      if (e.key === 'Escape') closeModal();
-    }
+    entries = await dbGetAll("photos");
+    folders = await dbGetAll("folders");
+    render();
+    renderFolders();
+    setupTabs();
+    setupZoom();
   });
 
-  renderPhotos();
-</script>
+  // Sistema de Abas
+  function setupTabs() {
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+  }
 
-</body>
-</html>
+  // Upload e Compressão Configurável
+  document.getElementById("al-open-picker").addEventListener("click", () => document.getElementById("al-file").click());
+
+  document.getElementById("al-file").addEventListener("change", (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const quality = parseFloat(document.getElementById("compression-quality").value || "0.65");
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX = 1200; let w = img.width, h = img.height;
+        if (w > MAX) { h *= MAX / w; w = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        pendingImage = canvas.toDataURL("image/jpeg", quality);
+        document.getElementById("al-preview").src = pendingImage;
+        updateFolderSelectOptions();
+        document.getElementById("al-modal-bg").classList.add("open");
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    document.getElementById("al-file").value = "";
+  });
+
+  document.getElementById("al-save").addEventListener("click", async () => {
+    if (!pendingImage) return;
+    const newEntry = {
+      id: "img_" + Date.now(), photo: pendingImage,
+      caption: document.getElementById("al-caption").value.trim() || "Sem legenda",
+      location: document.getElementById("al-location").value.trim() || "",
+      tag: document.getElementById(
