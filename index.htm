@@ -188,7 +188,7 @@
         }
 
         .screen.active {
-            display: block;
+            display: block !important;
         }
 
         @keyframes fadeIn {
@@ -443,7 +443,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: #000000;
             z-index: 2000;
-            display: none !important;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -480,23 +480,21 @@
             align-items: center;
         }
 
-        /* MODAIS - CORREÇÃO DE BLOQUEIO DE CLIQUES */
+        /* MODAIS */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(5px);
             z-index: 1500;
-            display: none !important; /* Esconde fisicamente por padrão */
+            display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            pointer-events: none;
         }
 
         .modal-overlay.active {
-            display: flex !important; /* Exibe somente com a classe active */
-            pointer-events: auto;
+            display: flex !important;
         }
 
         .modal-content {
@@ -602,7 +600,7 @@
                 <span>APERTA</span>
             </div>
             <div class="header-actions">
-                <button class="icon-btn" onclick="App.resetData()" title="Resetar App" aria-label="Resetar App">
+                <button class="icon-btn" onclick="window.App.resetData()" title="Resetar App" aria-label="Resetar App">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                 </button>
                 <button class="icon-btn" id="theme-toggle-btn" aria-label="Alternar Tema">
@@ -617,7 +615,7 @@
                 <span class="badge badge-accent" style="margin-bottom: 8px;">Experiência Narrativa</span>
                 <h1 class="hero-title">Olhe ao redor.</h1>
                 <p>Existem histórias misteriosas, cômicas e profundas escondidas em lugares comuns do seu dia a dia.</p>
-                <button class="btn btn-primary" onclick="App.navigateTo('screen-stories')">
+                <button class="btn btn-primary" onclick="window.App.navigateTo('screen-stories')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                     Começar uma História
                 </button>
@@ -643,4 +641,8 @@
                     <span class="badge badge-accent">Em Andamento</span>
                 </div>
                 <h3 id="active-story-title">Título da História</h3>
-                <p id="active-story-sub" style="font-size: 0.85rem; margin-bottom
+                <p id="active-story-sub" style="font-size: 0.85rem; margin-bottom: 12px;">Progresso atual...</p>
+                <button class="btn btn-primary" onclick="window.App.resumeStory()">Continuar História</button>
+            </div>
+
+            <
