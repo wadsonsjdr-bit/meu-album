@@ -15,7 +15,6 @@
             --text-main: #FFFFFF;
             --text-muted: #64748B;
             --radius-main: 16px;
-            --font-stack: 'Courier New', Courier, monospace, sans-serif;
         }
 
         * {
@@ -69,7 +68,7 @@
             padding: 20px;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.25s ease-out;
+            transition: all 0.2s ease-out;
             transform: scale(0.96);
             z-index: 1;
             overflow-y: auto;
@@ -82,7 +81,6 @@
             z-index: 2;
         }
 
-        /* Estilo Arcade / Neon */
         .arcade-title {
             font-size: 2rem;
             font-weight: 900;
@@ -102,7 +100,6 @@
             letter-spacing: 1px;
         }
 
-        /* Botões Estilizados */
         .btn-game {
             background: rgba(255, 255, 255, 0.03);
             border: 2px solid var(--neon-cyan);
@@ -128,18 +125,17 @@
             color: #000;
         }
 
-        .btn-magenta { border-color: var(--neon-magenta); color: var(--neon-magenta); box-shadow: 0 0 10px rgba(255, 0, 122, 0.1); }
+        .btn-magenta { border-color: var(--neon-magenta); color: var(--neon-magenta); }
         .btn-magenta:active { background: var(--neon-magenta); color: #FFF; }
 
-        .btn-yellow { border-color: var(--neon-yellow); color: var(--neon-yellow); box-shadow: 0 0 10px rgba(255, 230, 0, 0.1); }
+        .btn-yellow { border-color: var(--neon-yellow); color: var(--neon-yellow); }
         .btn-yellow:active { background: var(--neon-yellow); color: #000; }
 
-        .btn-green { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 102, 0.1); }
+        .btn-green { border-color: var(--neon-green); color: var(--neon-green); }
         .btn-green:active { background: var(--neon-green); color: #000; }
 
         .btn-subtle { border-color: rgba(255, 255, 255, 0.15); color: var(--text-muted); }
 
-        /* Painel HUD */
         .hud-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -156,7 +152,6 @@
         .hud-box .lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; display: block; }
         .hud-box .val { font-size: 1.1rem; font-weight: 900; color: #FFF; margin-top: 2px; }
 
-        /* Card do Desafio */
         .challenge-card {
             flex: 1;
             background: linear-gradient(180deg, rgba(13, 19, 34, 0.8) 0%, rgba(5, 8, 17, 0.9) 100%);
@@ -186,7 +181,7 @@
         }
 
         .challenge-title {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 800;
             line-height: 1.4;
             color: #FFF;
@@ -194,7 +189,6 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-        /* Camera Viewport */
         #cam-viewport { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
         .cam-controls {
             position: absolute; bottom: 0; left: 0; right: 0;
@@ -203,7 +197,6 @@
             display: flex; gap: 10px; z-index: 10;
         }
 
-        /* Galeria */
         .gallery-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -224,7 +217,6 @@
             width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.7rem; color: var(--text-muted); text-align: center; padding: 10px;
-            background: rgba(255, 255, 255, 0.02);
         }
         .gallery-box .tag {
             position: absolute; bottom: 0; left: 0; right: 0;
@@ -232,14 +224,13 @@
             padding: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
         }
 
-        /* Toast Popup */
         #toast-bar {
             position: absolute; top: 16px; left: 50%;
             transform: translateX(-50%) translateY(-100px);
             background: var(--neon-yellow); color: #000;
             padding: 10px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: 900;
             box-shadow: 0 0 15px var(--neon-yellow);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.3s ease;
             z-index: 999;
         }
         #toast-bar.active { transform: translateX(-50%) translateY(0); }
@@ -259,7 +250,7 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                <button class="btn-game" onclick="App.setupGame('classico')">Modo Caçada Libre</button>
+                <button class="btn-game" onclick="App.setupGame('classico')">Modo Caçada Livre</button>
                 <button class="btn-game btn-magenta" onclick="App.setupGame('surpresa')">Modo Surpresa / Desafio</button>
             </div>
         </section>
@@ -273,7 +264,7 @@
                 <div>
                     <label style="font-size: 0.7rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Número de Missões</label>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
-                        <button class="btn-game btn-subtle cfg-rounds selected" onclick="App.setCfg('rounds', 5, this)">5</button>
+                        <button class="btn-game btn-subtle cfg-rounds selected" style="border-color: var(--neon-cyan);" onclick="App.setCfg('rounds', 5, this)">5</button>
                         <button class="btn-game btn-subtle cfg-rounds" onclick="App.setCfg('rounds', 10, this)">10</button>
                         <button class="btn-game btn-subtle cfg-rounds" onclick="App.setCfg('rounds', 15, this)">15</button>
                     </div>
@@ -303,10 +294,9 @@
 
             <div class="challenge-card">
                 <span class="badge-cat" id="card-cat-text">CATEGORIA</span>
-                <p class="challenge-title" id="card-main-text">Gerando desafio...</p>
+                <p class="challenge-title" id="card-main-text">Carregando...</p>
             </div>
 
-            <!-- BOTÕES DE AÇÃO REESTRUTURADOS -->
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn-game btn-yellow" onclick="App.openCam()">📷 Tirar Foto Pelo App</button>
                 <button class="btn-game btn-green" onclick="App.completeManual()">✓ Concluir (Câmera Externa / Sem Foto)</button>
@@ -343,10 +333,10 @@
             </div>
         </section>
 
-        <!-- RELATÓRIO FINAL DA PARTIDA -->
+        <!-- RELATÓRIO FINAL -->
         <section id="screen-results" class="screen">
             <h1 class="arcade-title">FIM DA CAÇADA!</h1>
-            <p class="subtitle" id="res-rank">Classificação: EXPLORADOR VISUAL</p>
+            <p class="subtitle">Missão Cumprida</p>
 
             <div class="hud-grid" style="margin-bottom: 16px;">
                 <div class="hud-box">
@@ -371,27 +361,31 @@
     </div>
 
     <script>
-        /* --- MATRIZ GERADORA DE DESAFIOS DINÂMICOS --- */
+        /* --- MATRIZ GERADORA DE DESAFIOS (CORRIGIDA) --- */
         const Generator = {
             objetos: ["Uma porta ou janela", "Um meio de transporte", "Um objeto de metal", "Uma planta ou flor", "Algo de vidro", "Uma ferramenta", "Um calçado", "Uma cadeira ou assento", "Um livro ou papel", "Um dispositivo eletrônico"],
             iluminacao: ["sob luz solar direta", "imerso em sombras profundas", "com iluminação dramática", "com um brilho metálico ou reflexo", "sob luz fraca ou suave"],
             angulos: ["fotografado de baixo para cima", "visto de um ângulo rasante", "através de uma moldura natural", "visto através de um espelho/reflexo", "com enquadramento bem próximo (Macro)"],
-            conceitos: ["que pareça abandonado", "que lembre uma figura humana ou rosto", "que pareça fora de lugar", "que passe uma sensação de mistério", "com cores contrastantes", "que conte uma história em silêncio"],
+            conceitos: ["que pareça abandonado", "que lembre uma figura humana ou rosto", "que pareça fora de lugar", "que passe uma sensação de mistério", "com cores contrastantes"],
+
+            getItem(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            },
 
             build() {
                 const isComplex = Math.random() > 0.3;
-                const obj = this.objetos[Math.floor(Math.random() * this.objetos.length)];
+                const obj = this.getItem(this.objetos);
                 
                 if (isComplex) {
-                    const ang = this.angulos[Math.floor(Math.random() * this.angulos.length)];
-                    const con = this.conceitos[Math.floor(Math.random() * this.conceitos.length)];
+                    const ang = this.getItem(this.angulos);
+                    const con = this.getItem(this.conceitos);
                     return {
                         cat: "COMBINAÇÃO CRIATIVA",
                         text: `Fotografe ${obj.toLowerCase()}, ${ang}, ${con}.`,
                         pts: 250
                     };
                 } else {
-                    const ilu = this.iluminacao[Math.floor(Math.random() * this.iluminacao.length)];
+                    const ilu = this.getItem(this.iluminacao);
                     return {
                         cat: "OBSERVAÇÃO RÁPIDA",
                         text: `Encontre ${obj.toLowerCase()} ${ilu}.`,
@@ -409,7 +403,8 @@
 
             showScreen(id) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.getElementById(id).classList.add('active');
+                const target = document.getElementById(id);
+                if (target) target.classList.add('active');
             },
 
             setupGame(mode) {
@@ -448,7 +443,7 @@
 
             skipMission() {
                 this.session.combo = 1;
-                this.triggerToast("Missão Pulada! Combo resetado.");
+                this.triggerToast("Missão Pulada!");
                 this.nextTurn();
             },
 
@@ -456,17 +451,30 @@
                 this.processTurn(null);
             },
 
-            /* Câmera */
             async openCam() {
                 try {
                     this.camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                     document.getElementById('cam-viewport').srcObject = this.camStream;
                     this.showScreen('screen-cam');
                 } catch (e) {
-                    alert("Câmera indisponível. Utilize a opção 'Concluir sem foto'.");
+                    alert("Câmera indisponível. Use a opção 'Concluir (Câmera Externa / Sem Foto)'.");
                 }
             },
 
             closeCam() {
-                if (this.camStream) this.camStream.getTracks().forEach(t => t.stop());
-                this.showScreen('s
+                if (this.camStream) {
+                    this.camStream.getTracks().forEach(t => t.stop());
+                }
+                this.showScreen('screen-gameplay');
+            },
+
+            snap() {
+                const vid = document.getElementById('cam-viewport');
+                const cvs = document.getElementById('cam-canvas');
+                cvs.width = vid.videoWidth || 640;
+                cvs.height = vid.videoHeight || 480;
+                cvs.getContext('2d').drawImage(vid, 0, 0, cvs.width, cvs.height);
+                
+                document.getElementById('review-target').src = cvs.toDataURL('image/jpeg', 0.8);
+                this.closeCam();
+                this.showScreen('scr
