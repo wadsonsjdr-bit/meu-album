@@ -1,392 +1,798 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#f8f6f0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Álbum Pessoal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caça ao Tesouro Visual</title>
+    <style>
+        :root {
+            --bg-primary: #0F172A;
+            --bg-card: #1E293B;
+            --bg-card-hover: #334155;
+            --accent-yellow: #F59E0B;
+            --accent-blue: #3B82F6;
+            --accent-green: #10B981;
+            --accent-red: #EF4444;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-  <!-- Favicons e Apple Touch Icons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-  <style>
-    :root {
-      --bg-main: #f8f6f0;
-      --surface: #ffffff;
-      --surface-subtle: #f0ede6;
-      --text-primary: #1c1a17;
-      --text-secondary: #706c64;
-      --accent: #2c2a29;
-      --border-color: rgba(0, 0, 0, 0.08);
-      --radius-lg: 20px;
-      --radius-md: 12px;
-    }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-    @media (prefers-color-scheme: dark) {
-      :root.auto-dark {
-        --bg-main: #121212;
-        --surface: #1e1e1e;
-        --surface-subtle: #2c2c2c;
-        --text-primary: #ffffff;
-        --text-secondary: #a0a0a0;
-        --accent: #ffffff;
-        --border-color: rgba(255, 255, 255, 0.1);
-      }
-    }
+        #app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 900px;
+            background-color: var(--bg-primary);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        @media (min-width: 481px) {
+            #app-container {
+                height: 92vh;
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
 
-    body {
-      margin: 0; padding: 0;
-      background-color: var(--bg-main);
-      color: var(--text-primary);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      -webkit-font-smoothing: antialiased;
-    }
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: scale(0.98);
+            z-index: 1;
+            overflow-y: auto;
+        }
 
-    #album {
-      width: 100%;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: env(safe-area-inset-top, 20px) 20px calc(env(safe-area-inset-bottom, 20px) + 80px);
-    }
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+            z-index: 2;
+        }
 
-    /* Trava de Segurança por PIN */
-    #lock-screen {
-      position: fixed; inset: 0; background: var(--bg-main); z-index: 9999;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
-    }
-    .pin-input { font-size: 24px; letter-spacing: 12px; text-align: center; width: 160px; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--surface); color: var(--text-primary); outline: none; margin-top: 15px; }
+        /* Typography & Utilities */
+        h1 { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 8px; color: var(--text-main); }
+        h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
+        p.subtitle { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 32px; }
+        
+        .btn {
+            background-color: var(--accent-blue);
+            color: #FFF;
+            border: none;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+        }
 
-    /* Navegação por Abas */
-    .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer; border-radius: var(--radius-md); }
-    .tab-btn.active { background: var(--surface); color: var(--text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .btn:active { transform: scale(0.98); }
+        .btn-yellow { background-color: var(--accent-yellow); color: #000; }
+        .btn-green { background-color: var(--accent-green); }
+        .btn-red { background-color: var(--accent-red); }
+        .btn-outline { background: transparent; border: 2px solid var(--bg-card-hover); color: var(--text-main); }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+        /* Splash Screen */
+        #screen-home { justify-content: center; align-items: center; }
+        .logo-container { text-align: center; margin-bottom: 40px; }
+        .logo-icon { font-size: 4rem; margin-bottom: 12px; display: inline-block; }
+        .menu-group { width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
-    /* Elementos Visuais da Galeria */
-    .al-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .al-brand { display: flex; align-items: center; gap: 10px; }
-    .al-logo-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid var(--surface); }
-    .al-author { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+        /* Config Modal/Screen */
+        .config-group { margin-bottom: 20px; }
+        .config-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .grid-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .opt-btn {
+            background: var(--bg-card);
+            border: 1px solid transparent;
+            padding: 12px 8px;
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+        .opt-btn.selected { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
 
-    .al-header { padding: 8px 0 16px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px; }
-    .al-title { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; outline: none; }
-    .al-sub { font-size: 14px; color: var(--text-secondary); outline: none; }
+        /* HUD & Gameplay */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+        }
+        .hud-item { display: flex; flex-direction: column; align-items: center; }
+        .hud-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+        .hud-value { font-size: 1.1rem; font-weight: 800; }
 
-    .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
-    .chip { padding: 6px 14px; border-radius: 20px; background: var(--surface); color: var(--text-secondary); font-size: 12px; font-weight: 600; border: 1px solid var(--border-color); cursor: pointer; white-space: nowrap; }
-    .chip.active { background: var(--accent); color: var(--bg-main); border-color: var(--accent); }
+        .card-challenge {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 16px;
+        }
+        .tag-category {
+            position: absolute;
+            top: 16px;
+            background: rgba(255,255,255,0.08);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .challenge-text { font-size: 1.4rem; font-weight: 700; line-height: 1.4; margin: 20px 0; }
+        .badge-diff {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .diff-facil { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .diff-medio { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); }
+        .diff-dificil { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
 
-    .al-search-input, .al-input, .al-select { width: 100%; padding: 12px 14px; font-size: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface); color: var(--text-primary); outline: none; margin-bottom: 10px; }
+        /* Camera Modal */
+        #camera-viewport {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #000;
+        }
+        .camera-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
+            z-index: 10;
+            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.8) 100%);
+        }
 
-    .al-actions { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .btn { padding: 12px; border: 1px solid transparent; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface); color: var(--text-primary); transition: transform 0.15s ease; }
-    .btn:hover { transform: translateY(-1px); }
-    .btn-primary { background: var(--accent); color: var(--bg-main); }
-    .btn-outlined { border-color: var(--border-color); }
+        /* Review Screen */
+        .photo-preview {
+            width: 100%;
+            height: 60%;
+            border-radius: var(--radius-lg);
+            object-fit: cover;
+            margin-bottom: 16px;
+            background: var(--bg-card);
+        }
 
-    #al-file, #al-restore-file { display: none; }
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-card);
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item .cap {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.7);
+            font-size: 0.65rem;
+            padding: 4px 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    /* Grade de Fotos */
-    .al-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    @media (min-width: 601px) { .al-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-    @media (min-width: 901px) { .al-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+        /* Achievements Screen */
+        .achievements-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .achievement-card {
+            background: var(--bg-card);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 0.5;
+        }
+        .achievement-card.unlocked { opacity: 1; border: 1px solid var(--accent-yellow); }
+        .achievement-icon { font-size: 2rem; }
+        .achievement-info h4 { font-size: 0.95rem; margin-bottom: 2px; }
+        .achievement-info p { font-size: 0.75rem; color: var(--text-muted); }
 
-    .al-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); cursor: pointer; position: relative; }
-    .al-photo-wrapper { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: var(--surface-subtle); }
-    .al-photo { width: 100%; height: 100%; object-fit: cover; }
-    .al-card-fav { position: absolute; top: 8px; right: 8px; font-size: 16px; color: #e53935; }
-    .al-info { padding: 10px; }
-    .al-cap { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* Pinch-to-zoom Container */
-    .zoom-container { overflow: hidden; touch-action: none; display: flex; justify-content: center; align-items: center; }
-    .zoom-container img { transition: transform 0.1s ease-out; transform-origin: center center; }
-
-    /* Modais */
-    .al-modal-bg { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-    .al-modal-bg.open { opacity: 1; pointer-events: auto; }
-    .al-modal { background: var(--surface); width: 100%; max-width: 600px; padding: 20px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 90vh; overflow-y: auto; }
-    @media (min-width: 601px) { .al-modal { border-radius: var(--radius-lg); margin: auto; } .al-modal-bg { align-items: center; } }
-
-    /* Modo Livro */
-    .book-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-    .book-modal-bg.open { opacity: 1; pointer-events: auto; }
-    .book-header { padding: 16px 20px; display: flex; justify-content: space-between; color: #fff; }
-    .book-viewport { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px; }
-    .book-page { background: var(--surface); width: 100%; max-width: 480px; border-radius: var(--radius-lg); padding: 20px; text-align: center; color: var(--text-primary); }
-
-    .al-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text-primary); color: var(--surface); padding: 10px 20px; border-radius: 30px; font-size: 12px; transition: transform 0.3s ease; z-index: 4000; }
-    .al-toast.show { transform: translateX(-50%) translateY(0); }
-  </style>
+        /* Notification Toast */
+        #toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--accent-yellow);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+        #toast.visible { transform: translateX(-50%) translateY(0); }
+    </style>
 </head>
 <body>
 
-<!-- Tela de Segurança por PIN (Opcional) -->
-<div id="lock-screen" style="display: none;">
-  <div style="font-size: 18px; font-weight: 700;">Álbum Protegido</div>
-  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Digite seu PIN de 4 dígitos</div>
-  <input type="password" id="pin-entry" class="pin-input" maxlength="4" autofocus>
-</div>
+    <div id="app-container">
+        <div id="toast">+100 COMBO x2!</div>
 
-<div id="album">
-  <!-- Topo -->
-  <div class="al-top-bar">
-    <div class="al-brand">
-      <img class="al-logo-img" id="app-logo" alt="Logo">
-      <div style="display: flex; flex-direction: column;">
-        <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600;">Galeria Pessoal</span>
-        <span class="al-author">By.Wadson</span>
-      </div>
+        <!-- SCREEN: HOME -->
+        <section id="screen-home" class="screen active">
+            <div class="logo-container">
+                <span class="logo-icon">📸</span>
+                <h1>CAÇA VISUAL</h1>
+                <p class="subtitle">Transforme o mundo ao seu redor em um jogo de exploração.</p>
+            </div>
+            <div class="menu-group">
+                <button class="btn btn-yellow" onclick="App.initGameSetup('classico')">Modo Clássico</button>
+                <button class="btn btn-outline" onclick="App.initGameSetup('surpresa')">Modo Surpresa</button>
+                <button class="btn btn-outline" onclick="App.showScreen('screen-achievements')">Conquistas</button>
+            </div>
+        </section>
+
+        <!-- SCREEN: SETUP -->
+        <section id="screen-setup" class="screen">
+            <h2>Configurar Partida</h2>
+            <p class="subtitle" id="setup-mode-title">Modo Clássico</p>
+            
+            <div class="config-group">
+                <label>Quantidade de Rodadas</label>
+                <div class="grid-options" id="opt-rounds">
+                    <button class="opt-btn selected" data-val="5">5</button>
+                    <button class="opt-btn" data-val="10">10</button>
+                    <button class="opt-btn" data-val="15">15</button>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <label>Limite de Tempo (Total)</label>
+                <div class="grid-options" id="opt-time">
+                    <button class="opt-btn selected" data-val="0">Livre</button>
+                    <button class="opt-btn" data-val="300">5 min</button>
+                    <button class="opt-btn" data-val="600">10 min</button>
+                </div>
+            </div>
+
+            <div class="config-group">
+                <label>Dificuldade</label>
+                <div class="grid-options" id="opt-diff">
+                    <button class="opt-btn selected" data-val="todas">Todas</button>
+                    <button class="opt-btn" data-val="facil">Fácil</button>
+                    <button class="opt-btn" data-val="dificil">Difícil</button>
+                </div>
+            </div>
+
+            <div style="margin-top: auto;">
+                <button class="btn btn-green" onclick="App.startGame()">Iniciar Caçada</button>
+                <button class="btn btn-outline" style="margin-top: 8px;" onclick="App.showScreen('screen-home')">Voltar</button>
+            </div>
+        </section>
+
+        <!-- SCREEN: GAMEPLAY -->
+        <section id="screen-game" class="screen">
+            <div class="hud">
+                <div class="hud-item">
+                    <span class="hud-label">Rodada</span>
+                    <span class="hud-value" id="hud-round">1/5</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Tempo</span>
+                    <span class="hud-value" id="hud-timer">--:--</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Pontos</span>
+                    <span class="hud-value" id="hud-score">0</span>
+                </div>
+            </div>
+
+            <div class="card-challenge">
+                <span class="tag-category" id="card-category">CATEGORIA</span>
+                <p class="challenge-text" id="card-text">Carregando desafio...</p>
+                <span class="badge-diff diff-facil" id="card-diff">FÁCIL</span>
+            </div>
+
+            <button class="btn btn-yellow" onclick="App.openCamera()">📷 Capturar Desafio</button>
+        </section>
+
+        <!-- SCREEN: CAMERA -->
+        <section id="screen-camera" class="screen" style="padding: 0;">
+            <video id="camera-viewport" autoplay playsinline></video>
+            <canvas id="camera-canvas" style="display: none;"></canvas>
+            <div class="camera-overlay">
+                <div style="text-align: center; color: #FFF; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">
+                    <p id="cam-hud-text" style="font-weight: 700; font-size: 0.9rem;"></p>
+                </div>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <button class="btn btn-outline" style="flex: 1; background: rgba(0,0,0,0.5);" onclick="App.closeCamera()">Cancelar</button>
+                    <button class="btn btn-yellow" style="flex: 2; height: 60px; font-size: 1.2rem;" onclick="App.takePhoto()">TIRAR FOTO</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN: REVIEW -->
+        <section id="screen-review" class="screen">
+            <h2>Desafio Concluído?</h2>
+            <p class="subtitle">Verifique se sua foto atende ao requisito criativo.</p>
+            
+            <img id="review-img" class="photo-preview" src="" alt="Captura">
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto;">
+                <button class="btn btn-green" onclick="App.confirmPhoto()">✓ Validar & Pontuar</button>
+                <button class="btn btn-outline" onclick="App.openCamera()">↻ Tentar Novamente</button>
+            </div>
+        </section>
+
+        <!-- SCREEN: RESULTS -->
+        <section id="screen-results" class="screen">
+            <h1>Expedição Finalizada!</h1>
+            <p class="subtitle" id="res-rank">Classificação: EXPLORADOR VISUAL</p>
+
+            <div class="hud" style="margin-bottom: 16px;">
+                <div class="hud-item">
+                    <span class="hud-label">Pontuação</span>
+                    <span class="hud-value" id="res-score">0</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Maior Combo</span>
+                    <span class="hud-value" id="res-combo">x1</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Tempo Total</span>
+                    <span class="hud-value" id="res-time">00:00</span>
+                </div>
+            </div>
+
+            <h2>Galeria da Partida</h2>
+            <div class="gallery-grid" id="res-gallery"></div>
+
+            <button class="btn btn-yellow" style="margin-top: auto;" onclick="App.showScreen('screen-home')">Menu Principal</button>
+        </section>
+
+        <!-- SCREEN: ACHIEVEMENTS -->
+        <section id="screen-achievements" class="screen">
+            <h2>Sua Coleção</h2>
+            <p class="subtitle">Conquistas registradas no seu dispositivo.</p>
+            <div class="achievements-list" id="achievements-container"></div>
+            <button class="btn btn-outline" style="margin-top: auto;" onclick="App.showScreen('screen-home')">Voltar</button>
+        </section>
     </div>
-  </div>
 
-  <!-- Navegação por Abas -->
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="tab-galeria">📷 Galeria</button>
-    <button class="tab-btn" data-tab="tab-pastas">📁 Álbuns</button>
-    <button class="tab-btn" data-tab="tab-ajustes">⚙️ Ajustes</button>
-  </div>
+    <script>
+        /* --- BANCO DE DADOS DE DESAFIOS E COMPONENTES --- */
+        const DB = {
+            simples: [
+                { id: "s1", texto: "Fotografe algo vermelho.", categoria: "Cores", dificuldade: "facil", pontos: 100 },
+                { id: "s2", texto: "Fotografe algo redondo.", categoria: "Formas", dificuldade: "facil", pontos: 100 },
+                { id: "s3", texto: "Fotografe um carro.", categoria: "Objetos", dificuldade: "facil", pontos: 100 },
+                { id: "s4", texto: "Fotografe uma folha de árvore com formato incomum.", categoria: "Natureza", dificuldade: "facil", pontos: 100 },
+                { id: "s5", texto: "Fotografe uma superfície extremamente áspera.", categoria: "Texturas", dificuldade: "facil", pontos: 100 },
+                { id: "s6", texto: "Fotografe algo amarelo vibrante.", categoria: "Cores", dificuldade: "facil", pontos: 100 },
+                { id: "s7", texto: "Fotografe uma porta ou portão misterioso.", categoria: "Objetos", dificuldade: "facil", pontos: 100 },
+                { id: "s8", texto: "Fotografe uma linha perfeitamente reta.", categoria: "Formas", dificuldade: "facil", pontos: 100 },
+                { id: "s9", texto: "Fotografe um objeto inteiramente azul.", categoria: "Cores", dificuldade: "facil", pontos: 100 },
+                { id: "s10", texto: "Fotografe algo com rachaduras visíveis.", categoria: "Texturas", dificuldade: "facil", pontos: 100 }
+            ],
+            subjetivos: [
+                { id: "c1", texto: "Fotografe algo que parece estar te observando.", categoria: "Humor", dificuldade: "dificil", pontos: 300 },
+                { id: "c2", texto: "Encontre uma ilusão de pareidolia (um rosto em um objeto inanimado).", categoria: "Humor", dificuldade: "medio", pontos: 200 },
+                { id: "c3", texto: "Fotografe algo bonito escondido em um lugar feio.", categoria: "Perspectiva", dificuldade: "dificil", pontos: 300 },
+                { id: "c4", texto: "Capture uma composição digna de capa de álbum musical.", categoria: "Cinematográfico", dificuldade: "dificil", pontos: 300 },
+                { id: "c5", texto: "Fotografe uma sombra que conte uma história independente do objeto.", categoria: "História", dificuldade: "medio", pontos: 200 },
+                { id: "c6", texto: "Fotografe algo que pareça um frame de filme de suspense.", categoria: "Cinematográfico", dificuldade: "dificil", pontos: 300 },
+                { id: "c7", texto: "Fotografe algo que pareça completamente fora do lugar.", categoria: "Absurdo", dificuldade: "medio", pontos: 200 },
+                { id: "c8", texto: "Encontre o 'rei' indiscutível do seu ambiente atual.", categoria: "Absurdo", dificuldade: "medio", pontos: 200 },
+                { id: "c9", texto: "Tire uma foto que responda à pergunta: 'O que aconteceu aqui?'", categoria: "História", dificuldade: "dificil", pontos: 300 },
+                { id: "c10", texto: "Fotografe um objeto comum como se fosse uma relíquia preciosa.", categoria: "Perspectiva", dificuldade: "medio", pontos: 200 }
+            ],
+            surpresa: [
+                { id: "z1", texto: "Fotografe o objeto mais suspeito ao seu redor.", categoria: "Surpresa", dificuldade: "dificil", pontos: 250 },
+                { id: "z2", texto: "Fotografe algo que você normalmente ignoraria.", categoria: "Surpresa", dificuldade: "medio", pontos: 150 },
+                { id: "z3", texto: "Fotografe algo que pareça estar escondendo um segredo.", categoria: "Surpresa", dificuldade: "dificil", pontos: 250 },
+                { id: "z4", texto: "Fotografe algo que pareça ter sido colocado ali de propósito por um estranho.", categoria: "Surpresa", dificuldade: "medio", pontos: 200 }
+            ],
+            // Componentes para o Gerador Combinatório Procedural
+            combos: {
+                objetos: ["um carro", "uma cadeira", "uma planta", "uma garrafa", "um relógio", "uma ferramenta", "um livro", "uma porta"],
+                cores: ["vermelho(a)", "azul", "amarelo(a)", "completamente verde", "com tons de dourado"],
+                perspectivas: ["visto estritamente de baixo para cima", "através de um reflexo na água ou vidro", "usando uma moldura natural do ambiente", "de um ângulo extremamente rasante"],
+                emocoes: ["que pareça solitário(a)", "que transmita uma sensação de raiva", "que pareça estar dormindo calmamente", "que passe uma vibe melancólica"]
+            }
+        };
 
-  <!-- ABA 1: GALERIA -->
-  <div class="tab-content active" id="tab-galeria">
-    <div class="al-header">
-      <div class="al-title" id="al-title" contenteditable="true">Minhas Memórias</div>
-      <div class="al-sub" id="al-sub" contenteditable="true">Toque aqui para alterar o subtítulo</div>
-    </div>
+        const ACHIEVEMENTS_DEF = [
+            { id: "FIRST_PHOTO", title: "Primeiro Olhar", desc: "Conclua o seu primeiro desafio fotográfico.", icon: "📷" },
+            { id: "COMBO_MASTER", title: "Olho Treinado", desc: "Atinja um combo de 3x em uma partida.", icon: "🔥" },
+            { id: "SPEED_DEMON", title: "Caçador Veloz", desc: "Complete um desafio em menos de 15 segundos.", icon: "⚡" },
+            { id: "DIVERSE", title: "Perspicaz", desc: "Acumule 1.000 pontos totais no jogo.", icon: "🏆" }
+        ];
 
-    <!-- Filtros e Busca -->
-    <div class="filter-bar" id="filter-bar">
-      <button class="chip active" data-filter="all">Todas</button>
-      <button class="chip" data-filter="favs">♥ Favoritas</button>
-      <button class="chip" data-filter="tag-Viagem">Viagem</button>
-      <button class="chip" data-filter="tag-Família">Família</button>
-      <button class="chip" data-filter="tag-Retrato">Retrato</button>
-      <button class="chip" data-filter="tag-Pessoal">Pessoal</button>
-    </div>
+        /* --- MOTOR PRINCIPAL DA APLICAÇÃO --- */
+        const App = {
+            state: {
+                currentScreen: 'screen-home',
+                gameMode: 'classico', // classico | surpresa
+                config: { rounds: 5, totalTime: 0, difficulty: 'todas' },
+                session: {
+                    currentRound: 0,
+                    score: 0,
+                    combo: 1,
+                    maxCombo: 1,
+                    timeElapsed: 0,
+                    history: [], // Array de { challenge, photoData, points }
+                    currentChallenge: null,
+                    roundStartTime: 0
+                },
+                achievements: JSON.parse(localStorage.getItem('photo_hunt_achievements') || '[]'),
+                stats: JSON.parse(localStorage.getItem('photo_hunt_stats') || '{"totalScore":0}'),
+                timerId: null,
+                cameraStream: null
+            },
 
-    <input type="text" id="al-search" class="al-search-input" placeholder="🔍 Buscar por legenda, local ou tag...">
+            init() {
+                this.setupUIEvents();
+                this.renderAchievements();
+            },
 
-    <!-- Ações e Ordenação -->
-    <div class="al-actions">
-      <button class="btn btn-primary" id="al-open-picker"> Nova Foto</button>
-      <select id="al-sort" class="al-select" style="margin-bottom:0;">
-        <option value="newest">Mais Recentes</option>
-        <option value="oldest">Mais Antigas</option>
-        <option value="az">A-Z Legenda</option>
-      </select>
-      <button class="btn btn-outlined" id="al-open-book">📖 Livro</button>
-    </div>
+            setupUIEvents() {
+                // Handlers para botões de seleção de configuração
+                const bindGroup = (groupId, key) => {
+                    document.querySelectorAll(`#${groupId} .opt-btn`).forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            document.querySelectorAll(`#${groupId} .opt-btn`).forEach(b => b.classList.remove('selected'));
+                            e.target.classList.add('selected');
+                            this.state.config[key] = e.target.dataset.val;
+                        });
+                    });
+                };
+                bindGroup('opt-rounds', 'rounds');
+                bindGroup('opt-time', 'totalTime');
+                bindGroup('opt-diff', 'difficulty');
+            },
 
-    <div style="font-size: 12px; color: var(--text-secondary); margin: 12px 0;" id="al-count">0 fotos salvas</div>
-    <div class="al-grid" id="al-grid"></div>
-  </div>
+            showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(screenId).classList.add('active');
+                this.state.currentScreen = screenId;
+            },
 
-  <!-- ABA 2: ÁLBUNS / PASTAS -->
-  <div class="tab-content" id="tab-pastas">
-    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-      <input type="text" id="new-folder-name" class="al-input" placeholder="Nome do novo álbum..." style="margin-bottom:0;">
-      <button class="btn btn-primary" id="add-folder-btn">Criar Pasta</button>
-    </div>
-    <div id="folders-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;"></div>
-  </div>
+            initGameSetup(mode) {
+                this.state.gameMode = mode;
+                document.getElementById('setup-mode-title').innerText = mode === 'surpresa' ? 'Modo Surpresa (Instintivo)' : 'Modo Clássico (Equilibrado)';
+                this.showScreen('screen-setup');
+            },
 
-  <!-- ABA 3: AJUSTES -->
-  <div class="tab-content" id="tab-ajustes">
-    <div style="background: var(--surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
-      <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">🔒 Segurança</div>
-      <label style="font-size: 13px; display: block; margin-bottom: 8px;">
-        PIN de Acesso (Deixe em branco para desativar):
-      </label>
-      <input type="password" id="set-pin-input" class="al-input" placeholder="Ex: 1234" maxlength="4">
-      <button class="btn btn-outlined" id="save-pin-btn">Salvar PIN</button>
-    </div>
+            startGame() {
+                // Reset da sessão
+                this.state.session = {
+                    currentRound: 0,
+                    score: 0,
+                    combo: 1,
+                    maxCombo: 1,
+                    timeElapsed: 0,
+                    history: [],
+                    currentChallenge: null,
+                    roundStartTime: 0
+                };
 
-    <div style="background: var(--surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
-      <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">🖼️ Qualidade das Fotos</div>
-      <select id="compression-quality" class="al-select" style="margin-bottom:0;">
-        <option value="0.85">Alta Qualidade (Maior espaço)</option>
-        <option value="0.65" selected>Equilibrado (Recomendado)</option>
-        <option value="0.45">Economia de Espaço (Baixa resolução)</option>
-      </select>
-    </div>
+                this.showScreen('screen-game');
+                this.startGlobalTimer();
+                this.nextRound();
+            },
 
-    <div style="background: var(--surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-      <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">💾 Backup e Dados</div>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-outlined" id="al-backup-btn" style="flex:1;">Exportar JSON</button>
-        <button class="btn btn-outlined" id="al-restore-btn" style="flex:1;">Importar JSON</button>
-      </div>
-    </div>
-  </div>
+            /* --- GERADOR PROCEDURAL DE DESAFIOS --- */
+            generateChallenge() {
+                // 25% de chance de gerar um desafio combinatório procedural se modo clássico
+                const isCombinatorial = this.state.gameMode === 'classico' && Math.random() < 0.3;
 
-  <input type="file" id="al-file" accept="image/*">
-  <input type="file" id="al-restore-file" accept=".json">
-</div>
+                if (isCombinatorial) {
+                    const obj = DB.combos.objetos[Math.floor(Math.random() * DB.combos.objetos.length)];
+                    const cor = DB.combos.cores[Math.floor(Math.random() * DB.combos.cores.length)];
+                    const pers = DB.combos.perspectivas[Math.floor(Math.random() * DB.combos.perspectivas.length)];
+                    return {
+                        id: `gen_${Date.now()}`,
+                        texto: `Fotografe ${obj} ${cor}, ${pers}.`,
+                        categoria: "Combinado",
+                        dificuldade: "dificil",
+                        pontos: 350
+                    };
+                }
 
-<!-- Modal Adicionar Foto -->
-<div class="al-modal-bg" id="al-modal-bg">
-  <div class="al-modal">
-    <img id="al-preview" style="width: 100%; max-height: 240px; object-fit: contain; border-radius: var(--radius-md); margin-bottom: 10px;">
-    <input class="al-input" id="al-caption" placeholder="Legenda da foto...">
-    <input class="al-input" id="al-location" placeholder="📍 Localização (opcional)">
-    <select class="al-select" id="al-tag">
-      <option value="">Selecione uma Categoria/Tag</option>
-      <option value="Viagem">Viagem</option>
-      <option value="Família">Família</option>
-      <option value="Retrato">Retrato</option>
-      <option value="Pessoal">Pessoal</option>
-    </select>
-    <select class="al-select" id="al-folder-select">
-      <option value="">Sem Pasta (Raiz)</option>
-    </select>
-    <div style="display:flex; gap:10px;">
-      <button class="btn btn-outlined" id="al-cancel" style="flex:1">Cancelar</button>
-      <button class="btn btn-primary" id="al-save" style="flex:1">Salvar</button>
-    </div>
-  </div>
-</div>
+                let pool = [];
+                if (this.state.gameMode === 'surpresa') {
+                    pool = [...DB.subjetivos, ...DB.surpresa];
+                } else {
+                    pool = [...DB.simples, ...DB.subjetivos];
+                }
 
-<!-- Modal Visualizar com Zoom -->
-<div class="al-modal-bg" id="al-light-bg">
-  <div class="al-modal">
-    <div class="zoom-container" id="zoom-area">
-      <img id="al-light-photo" style="width:100%; max-height:350px; object-fit:contain; border-radius:var(--radius-md);">
-    </div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0;">
-      <button class="btn btn-outlined" id="al-fav-btn" style="color:#e53935;">♡ Favoritar</button>
-      <button class="btn btn-outlined" id="al-light-download">💾 Baixar</button>
-    </div>
-    <input class="al-input" id="al-edit-caption" placeholder="Editar legenda...">
-    <input class="al-input" id="al-edit-location" placeholder="📍 Localização">
-    <div style="display:flex; gap:8px;">
-      <button class="btn btn-outlined" id="al-light-remove" style="flex:1; color:#e53935;">Excluir</button>
-      <button class="btn btn-primary" id="al-light-save" style="flex:1">Atualizar</button>
-    </div>
-  </div>
-</div>
+                // Filtrar por dificuldade se configurado
+                if (this.state.config.difficulty !== 'todas') {
+                    pool = pool.filter(c => c.dificuldade === this.state.config.difficulty);
+                }
 
-<!-- Modal Modo Livro -->
-<div class="book-modal-bg" id="book-modal">
-  <div class="book-header">
-    <span>Álbum Digital</span>
-    <button class="btn btn-outlined" id="book-close" style="color:#fff;">Fechar</button>
-  </div>
-  <div class="book-viewport" id="book-viewport">
-    <div class="book-page" id="book-page-content"></div>
-  </div>
-</div>
+                // Garantir rotação (não repetir desafios recentes na mesma sessão)
+                const usedIds = this.state.session.history.map(h => h.challenge.id);
+                const available = pool.filter(c => !usedIds.includes(c.id));
+                const finalPool = available.length > 0 ? available : pool;
 
-<div class="al-toast" id="al-toast"></div>
+                return finalPool[Math.floor(Math.random() * finalPool.length)];
+            },
 
-<script>
-(function() {
-  let db;
-  const DB_NAME = "AlbumDB_V06";
+            nextRound() {
+                this.state.session.currentRound++;
+                const maxRounds = parseInt(this.state.config.rounds);
 
-  function initDB() {
-    return new Promise((resolve) => {
-      const req = indexedDB.open(DB_NAME, 1);
-      req.onsuccess = (e) => { db = e.target.result; resolve(); };
-      req.onupgradeneeded = (e) => {
-        let db = e.target.result;
-        if (!db.objectStoreNames.contains("photos")) db.createObjectStore("photos", { keyPath: "id" });
-        if (!db.objectStoreNames.contains("folders")) db.createObjectStore("folders", { keyPath: "id" });
-        if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
-      };
-    });
-  }
+                if (this.state.session.currentRound > maxRounds) {
+                    this.finishGame();
+                    return;
+                }
 
-  function dbSave(store, data) {
-    return new Promise((r) => { const tx = db.transaction(store, "readwrite"); tx.objectStore(store).put(data); tx.oncomplete = () => r(true); });
-  }
-  function dbGetAll(store) {
-    return new Promise((r) => { const tx = db.transaction(store, "readonly"); const req = tx.objectStore(store).getAll(); req.onsuccess = () => r(req.result || []); });
-  }
-  function dbGet(store, key) {
-    return new Promise((r) => { const tx = db.transaction(store, "readonly"); const req = tx.objectStore(store).get(key); req.onsuccess = () => r(req.result ? req.result.value : null); });
-  }
-  function dbDelete(store, key) {
-    return new Promise((r) => { const tx = db.transaction(store, "readwrite"); tx.objectStore(store).delete(key); tx.oncomplete = () => r(true); });
-  }
+                const challenge = this.generateChallenge();
+                this.state.session.currentChallenge = challenge;
+                this.state.session.roundStartTime = Date.now();
 
-  let entries = [], folders = [], pendingImage = null, activePhotoId = null, activeFilter = "all", currentFolderFilter = null;
+                // Atualizar HUD e Card
+                document.getElementById('hud-round').innerText = `${this.state.session.currentRound}/${maxRounds}`;
+                document.getElementById('hud-score').innerText = this.state.session.score;
+                
+                const cardCat = document.getElementById('card-category');
+                const cardTxt = document.getElementById('card-text');
+                const cardDiff = document.getElementById('card-diff');
 
-  const LOGO_DATA = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231c2541'/><circle cx='50' cy='50' r='44' fill='none' stroke='%23ffb703' stroke-width='2'/><path d='M30,65 L50,35 L70,65 Z' fill='%236fffe9'/><circle cx='50' cy='42' r='6' fill='%23ffb703'/><text x='50' y='82' font-size='10' font-weight='bold' fill='%23ffffff' text-anchor='middle' font-family='sans-serif'>By.Wadson</text></svg>";
+                cardCat.innerText = challenge.categoria;
+                cardTxt.innerText = `"${challenge.texto}"`;
+                cardDiff.innerText = challenge.dificuldade.toUpperCase();
+                cardDiff.className = `badge-diff diff-${challenge.dificuldade}`;
+            },
 
-  window.addEventListener("DOMContentLoaded", async () => {
-    document.getElementById("app-logo").src = LOGO_DATA;
-    document.documentElement.classList.add("auto-dark");
-    await initDB();
+            startGlobalTimer() {
+                if (this.state.timerId) clearInterval(this.state.timerId);
+                const limitSeconds = parseInt(this.state.config.totalTime);
 
-    // Trava por PIN
-    const savedPin = await dbGet("settings", "user_pin");
-    if (savedPin) {
-      document.getElementById("lock-screen").style.display = "flex";
-      document.getElementById("pin-entry").addEventListener("input", (e) => {
-        if (e.target.value === savedPin) {
-          document.getElementById("lock-screen").style.display = "none";
-        }
-      });
-    }
+                this.state.timerId = setInterval(() => {
+                    this.state.session.timeElapsed++;
+                    
+                    if (limitSeconds > 0) {
+                        const remaining = limitSeconds - this.state.session.timeElapsed;
+                        if (remaining <= 0) {
+                            clearInterval(this.state.timerId);
+                            this.finishGame();
+                            return;
+                        }
+                        const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+                        const s = (remaining % 60).toString().padStart(2, '0');
+                        document.getElementById('hud-timer').innerText = `${m}:${s}`;
+                    } else {
+                        const m = Math.floor(this.state.session.timeElapsed / 60).toString().padStart(2, '0');
+                        const s = (this.state.session.timeElapsed % 60).toString().padStart(2, '0');
+                        document.getElementById('hud-timer').innerText = `${m}:${s}`;
+                    }
+                }, 1000);
+            },
 
-    entries = await dbGetAll("photos");
-    folders = await dbGetAll("folders");
-    render();
-    renderFolders();
-    setupTabs();
-    setupZoom();
-  });
+            /* --- CONTROLE DE CÂMERA (WEB APIs) --- */
+            async openCamera() {
+                const video = document.getElementById('camera-viewport');
+                document.getElementById('cam-hud-text').innerText = this.state.session.currentChallenge.texto;
 
-  // Sistema de Abas
-  function setupTabs() {
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.tab).classList.add("active");
-      });
-    });
-  }
+                try {
+                    this.state.cameraStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: { ideal: "environment" } },
+                        audio: false
+                    });
+                    video.srcObject = this.state.cameraStream;
+                    this.showScreen('screen-camera');
+                } catch (err) {
+                    alert("Acesso à câmera negado ou indisponível. Verifique as permissões do seu navegador.");
+                }
+            },
 
-  // Upload e Compressão Configurável
-  document.getElementById("al-open-picker").addEventListener("click", () => document.getElementById("al-file").click());
+            closeCamera() {
+                if (this.state.cameraStream) {
+                    this.state.cameraStream.getTracks().forEach(track => track.stop());
+                }
+                this.showScreen('screen-game');
+            },
 
-  document.getElementById("al-file").addEventListener("change", (e) => {
-    const file = e.target.files[0]; if (!file) return;
-    const quality = parseFloat(document.getElementById("compression-quality").value || "0.65");
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX = 1200; let w = img.width, h = img.height;
-        if (w > MAX) { h *= MAX / w; w = MAX; }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        pendingImage = canvas.toDataURL("image/jpeg", quality);
-        document.getElementById("al-preview").src = pendingImage;
-        updateFolderSelectOptions();
-        document.getElementById("al-modal-bg").classList.add("open");
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-    document.getElementById("al-file").value = "";
-  });
+            takePhoto() {
+                const video = document.getElementById('camera-viewport');
+                const canvas = document.getElementById('camera-canvas');
+                const context = canvas.getContext('2d');
 
-  document.getElementById("al-save").addEventListener("click", async () => {
-    if (!pendingImage) return;
-    const newEntry = {
-      id: "img_" + Date.now(), photo: pendingImage,
-      caption: document.getElementById("al-caption").value.trim() || "Sem legenda",
-      location: document.getElementById("al-location").value.trim() || "",
-      tag: document.getElementById(
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                document.getElementById('review-img').src = dataUrl;
+
+                this.closeCamera();
+                this.showScreen('screen-review');
+            },
+
+            confirmPhoto() {
+                const photoData = document.getElementById('review-img').src;
+                const challenge = this.state.session.currentChallenge;
+                
+                // Cálculo de Pontuação e Combo
+                const timeTakenSec = (Date.now() - this.state.session.roundStartTime) / 1000;
+                const earnedPoints = challenge.pontos * this.state.session.combo;
+                
+                this.state.session.score += earnedPoints;
+                this.state.session.history.push({
+                    challenge: challenge,
+                    photoData: photoData,
+                    points: earnedPoints
+                });
+
+                // Notificação Visual (Toast)
+                this.showToast(`+${earnedPoints} (COMBO x${this.state.session.combo})`);
+
+                // Validação de Conquistas
+                this.checkAchievements(timeTakenSec);
+
+                // Incremento de Combo para próxima rodada
+                this.state.session.combo++;
+                if (this.state.session.combo > this.state.session.maxCombo) {
+                    this.state.session.maxCombo = this.state.session.combo;
+                }
+
+                this.nextRound();
+            },
+
+            showToast(msg) {
+                const toast = document.getElementById('toast');
+                toast.innerText = msg;
+                toast.classList.add('visible');
+                setTimeout(() => toast.classList.remove('visible'), 2000);
+            },
+
+            /* --- MÓDULO DE CONQUISTAS --- */
+            checkAchievements(lastRoundTimeSec) {
+                const unlock = (id) => {
+                    if (!this.state.achievements.includes(id)) {
+                        this.state.achievements.push(id);
+                        localStorage.setItem('photo_hunt_achievements', JSON.stringify(this.state.achievements));
+                        const def = ACHIEVEMENTS_DEF.find(a => a.id === id);
+                        this.showToast(`🏆 CONQUISTA: ${def.title}!`);
+                    }
+                };
+
+                unlock("FIRST_PHOTO");
+                if (this.state.session.combo >= 3) unlock("COMBO_MASTER");
+                if (lastRoundTimeSec < 15) unlock("SPEED_DEMON");
+
+                this.state.stats.totalScore = (this.state.stats.totalScore || 0) + this.state.session.score;
+                localStorage.setItem('photo_hunt_stats', JSON.stringify(this.state.stats));
+
+                if (this.state.stats.totalScore >= 1000) unlock("DIVERSE");
+            },
+
+            renderAchievements() {
+                const container = document.getElementById('achievements-container');
+                container.innerHTML = '';
+
+                ACHIEVEMENTS_DEF.forEach(def => {
+                    const isUnlocked = this.state.achievements.includes(def.id);
+                    const card = document.createElement('div');
+                    card.className = `achievement-card ${isUnlocked ? 'unlocked' : ''}`;
+                    card.innerHTML = `
+                        <div class="achievement-icon">${def.icon}</div>
+                        <div class="achievement-info">
+                            <h4>${def.title}</h4>
+                            <p>${def.desc}</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            /* --- FINALIZAÇÃO E GALERIA --- */
+            finishGame() {
+                if (this.state.timerId) clearInterval(this.state.timerId);
+
+                // Determinar Rank Visual
+                let rank = "OBSERVADOR INICIANTE";
+                const s = this.state.session.score;
+                if (s > 1500) rank = "MESTRE DO OLHAR";
+                else if (s > 800) rank = "CAÇADOR DE MOMENTOS";
+                else if (s > 400) rank = "EXPLORADOR VISUAL";
+
+                document.getElementById('res-rank').innerText = `Classificação: ${rank}`;
+                document.getElementById('res-score').innerText = this.state.session.score;
+                document.getElementById('res-combo').innerText = `x${this.state.session.maxCombo}`;
+                
+                const m = Math.floor(this.state.session.timeElapsed / 60).toString().padStart(2, '0');
+                const sec = (this.state.session.timeElapsed % 60).toString().padStart(2, '0');
+                document.getElementById('res-time').innerText = `${m}:${sec}`;
+
+                // Renderizar Galeria Final
+                const gallery = document.getElementById('res-gallery');
+                gallery.innerHTML = '';
+                this.state.session.history.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'gallery-item';
+                    el.innerHTML = `
+                        <img src="${item.photoData}" alt="Captura">
+                        <div class="cap">${item.challenge.texto}</div>
+                    `;
+                    gallery.appendChild(el);
+                });
+
+                this.renderAchievements();
+                this.showScreen('screen-results');
+            }
+        };
+
+        // Inicializar aplicação ao carregar DOM
+        window.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
