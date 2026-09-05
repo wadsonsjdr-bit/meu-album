@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#121212">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Portfólio & Catálogo</title>
+  <title>Catálogo & Portfólio</title>
 
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="icon" type="image/png" href="icon.png">
@@ -37,12 +37,10 @@
       padding: env(safe-area-inset-top, 20px) 16px 80px;
     }
 
-    /* Topo / Título */
     .header { text-align: center; padding: 24px 0 16px; border-bottom: 1px solid var(--border); }
     .title { font-size: 26px; font-weight: 700; margin: 0; }
     .subtitle { font-size: 13px; color: var(--text-sub); margin-top: 6px; }
 
-    /* Navegação por Abas */
     .nav-tabs { display: flex; gap: 8px; margin: 20px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
     .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-sub); font-weight: 600; cursor: pointer; border-radius: 10px; font-size: 13px; }
     .tab-btn.active { background: var(--accent); color: #000; }
@@ -50,35 +48,33 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Filtros da Galeria */
     .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; }
     .chip { padding: 6px 14px; border-radius: 20px; background: var(--surface); color: var(--text-sub); border: 1px solid var(--border); font-size: 12px; cursor: pointer; white-space: nowrap; }
     .chip.active { background: var(--text); color: var(--bg); font-weight: 700; }
 
-    /* Grade de Fotos */
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
-    .card { background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); cursor: pointer; }
+    .card { background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); cursor: pointer; position: relative; }
     .photo-box { width: 100%; aspect-ratio: 1/1; background: var(--surface-subtle); overflow: hidden; }
     .photo-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
     .card:hover .photo-box img { transform: scale(1.05); }
-    .card-info { padding: 10px; }
+    .card-info { padding: 10px; display: flex; justify-content: space-between; align-items: center; }
     .card-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fav-heart { color: #e53935; font-size: 14px; }
 
-    /* Tabela de Serviços */
     .package-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
     .package-title { font-size: 18px; font-weight: 700; color: var(--accent); }
     .package-price { font-size: 20px; font-weight: 700; margin: 8px 0; }
     .package-list { font-size: 13px; color: var(--text-sub); padding-left: 18px; line-height: 1.6; }
 
-    /* Modal de Foto Ampliada */
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px; }
     .modal-bg.open { opacity: 1; pointer-events: auto; }
     .modal { background: var(--surface); border-radius: var(--radius); padding: 16px; width: 100%; max-width: 500px; border: 1px solid var(--border); }
     .modal img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; }
 
-    .btn-close { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-subtle); color: var(--text); font-weight: 600; cursor: pointer; margin-top: 12px; }
+    .btn-action { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-subtle); color: var(--text); font-weight: 600; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-fav { background: transparent; border-color: var(--accent); color: var(--accent); }
   </style>
 </head>
 <body>
@@ -86,21 +82,21 @@
 <div id="app">
   <div class="header">
     <h1 class="title">Portfólio & Catálogo</h1>
-    <p class="subtitle">Galeria de Trabalhos e Informações de Serviços</p>
+    <p class="subtitle">Apresentação de Trabalhos e Serviços</p>
   </div>
 
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('galeria')">🖼️ Galeria</button>
-    <button class="tab-btn" onclick="switchTab('pacotes')">💎 Tabela de Preços</button>
-    <button class="tab-btn" onclick="switchTab('sobre')">✨ Sobre</button>
+    <button class="tab-btn active" onclick="switchTab('galeria', event)">🖼️ Galeria</button>
+    <button class="tab-btn" onclick="switchTab('pacotes', event)">💎 Tabela de Preços</button>
+    <button class="tab-btn" onclick="switchTab('sobre', event)">✨ Sobre</button>
   </div>
 
   <div class="tab-content active" id="tab-galeria">
     <div class="chips">
       <button class="chip active" onclick="filterPhotos('all', this)">Todas</button>
+      <button class="chip" onclick="filterPhotos('favs', this)">♥ Favoritas</button>
       <button class="chip" onclick="filterPhotos('Ensaios', this)">Ensaios</button>
       <button class="chip" onclick="filterPhotos('Casamentos', this)">Casamentos</button>
-      <button class="chip" onclick="filterPhotos('Eventos', this)">Eventos</button>
     </div>
 
     <div class="grid" id="portfolio-grid"></div>
@@ -113,17 +109,6 @@
       <ul class="package-list">
         <li>1h30 de ensaio</li>
         <li>20 fotos editadas em alta resolução</li>
-        <li>Entrega via galeria digital privada</li>
-      </ul>
-    </div>
-
-    <div class="package-card">
-      <div class="package-title">Cobertura de Evento</div>
-      <div class="package-price">R$ 800,00</div>
-      <ul class="package-list">
-        <li>Até 4 horas de evento</li>
-        <li>Todas as fotos tratadas</li>
-        <li>Entrega digital rápida</li>
       </ul>
     </div>
   </div>
@@ -131,7 +116,7 @@
   <div class="tab-content" id="tab-sobre">
     <div style="background:var(--surface); padding:20px; border-radius:var(--radius); border:1px solid var(--border); line-height:1.6; font-size:14px; color:var(--text-sub);">
       <h3 style="color:var(--text); margin-top:0;">Catálogo Digital</h3>
-      <p>Apresentação visual de trabalhos fotográficos. Para personalizar o catálogo com suas próprias fotos, adicione os links das imagens no arquivo de código.</p>
+      <p>Apresentação visual interativa com áudio responsivo.</p>
     </div>
   </div>
 </div>
@@ -143,24 +128,98 @@
       <div id="modal-title" style="font-weight:700; font-size:16px;"></div>
       <div id="modal-tag" style="font-size:12px; color:var(--accent); margin-top:4px;"></div>
     </div>
-    <button class="btn-close" onclick="document.getElementById('photo-modal').classList.remove('open')">Fechar Visualização</button>
+    
+    <button class="btn-action btn-fav" id="modal-fav-btn" onclick="toggleFavCurrent()">
+      ♥ Favoritar Foto
+    </button>
+    <button class="btn-action" onclick="closeModalDirect()">Fechar Visualização</button>
   </div>
 </div>
 
 <script>
-  // SUAS FOTOS AQUI (Substitua pelos links das suas imagens):
+  // SISTEMA DE ÁUDIO SINTÉTICO (Web Audio API)
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+
+  function initAudio() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playClickSound() {
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+  }
+
+  function playShutterSound() {
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+  }
+
+  function playSatisfyingFavSound() {
+    initAudio();
+    const now = audioCtx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // Acorde Maior Harmônico (C E G C)
+    notes.forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+      gain.gain.setValueAtTime(0.2, now + idx * 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.25);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now + idx * 0.05);
+      osc.stop(now + idx * 0.05 + 0.25);
+    });
+  }
+
+  function playAddPhotoSound() {
+    initAudio();
+    const now = audioCtx.currentTime;
+    [440, 880].forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+      gain.gain.setValueAtTime(0.25, now + idx * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now + idx * 0.08);
+      osc.stop(now + idx * 0.08 + 0.15);
+    });
+  }
+
+  // DADOS E LÓGICA DO APP
+  let activeItem = null;
   const portfolioData = [
-    { id: 1, title: "Ensaio External", tag: "Ensaios", url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" },
-    { id: 2, title: "Cerimônia", tag: "Casamentos", url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800" },
-    { id: 3, title: "Retrato Studio", tag: "Ensaios", url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" },
-    { id: 4, title: "Celebração", tag: "Eventos", url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800" }
+    { id: 1, title: "Ensaio External", tag: "Ensaios", isFav: false, url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" },
+    { id: 2, title: "Cerimônia", tag: "Casamentos", isFav: false, url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800" },
+    { id: 3, title: "Retrato Studio", tag: "Ensaios", isFav: false, url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" }
   ];
 
   function renderPortfolio(filter = 'all') {
     const grid = document.getElementById("portfolio-grid");
     grid.innerHTML = "";
     
-    const list = filter === 'all' ? portfolioData : portfolioData.filter(item => item.tag === filter);
+    let list = portfolioData;
+    if (filter === 'favs') list = portfolioData.filter(i => i.isFav);
+    else if (filter !== 'all') list = portfolioData.filter(i => i.tag === filter);
 
     list.forEach(item => {
       const card = document.createElement("div");
@@ -169,20 +228,23 @@
         <div class="photo-box"><img src="${item.url}" loading="lazy"></div>
         <div class="card-info">
           <div class="card-title">${item.title}</div>
+          ${item.isFav ? '<span class="fav-heart">♥</span>' : ''}
         </div>
       `;
-      card.onclick = () => openModal(item);
+      card.onclick = () => { playShutterSound(); openModal(item); };
       grid.appendChild(card);
     });
   }
 
   function filterPhotos(tag, element) {
+    playClickSound();
     document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
     element.classList.add("active");
     renderPortfolio(tag);
   }
 
-  function switchTab(tabId) {
+  function switchTab(tabId, event) {
+    playClickSound();
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
     
@@ -191,16 +253,35 @@
   }
 
   function openModal(item) {
+    activeItem = item;
     document.getElementById("modal-img").src = item.url;
     document.getElementById("modal-title").innerText = item.title;
     document.getElementById("modal-tag").innerText = `#${item.tag}`;
+    
+    const favBtn = document.getElementById("modal-fav-btn");
+    favBtn.innerText = item.isFav ? "♥ Favoritado" : "♡ Favoritar Foto";
     document.getElementById("photo-modal").classList.add("open");
   }
 
-  function closeModal(e) {
-    if (e.target.id === "photo-modal") {
-      document.getElementById("photo-modal").classList.remove("open");
+  function toggleFavCurrent() {
+    if (!activeItem) return;
+    activeItem.isFav = !activeItem.isFav;
+    if (activeItem.isFav) {
+      playSatisfyingFavSound();
+    } else {
+      playClickSound();
     }
+    document.getElementById("modal-fav-btn").innerText = activeItem.isFav ? "♥ Favoritado" : "♡ Favoritar Foto";
+    renderPortfolio();
+  }
+
+  function closeModalDirect() {
+    playClickSound();
+    document.getElementById("photo-modal").classList.remove("open");
+  }
+
+  function closeModal(e) {
+    if (e.target.id === "photo-modal") closeModalDirect();
   }
 
   renderPortfolio();
