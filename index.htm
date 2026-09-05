@@ -3,653 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#f8f6f0">
-  <title>Álbum Pessoal</title>
+  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Portfólio & Catálogo</title>
+
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
 
   <style>
     :root {
-      --bg-main: #f8f6f0;
-      --surface: #ffffff;
-      --surface-subtle: #f0ede6;
-      --text-primary: #1c1a17;
-      --text-secondary: #706c64;
-      --accent: #2c2a29;
-      --border-color: rgba(0, 0, 0, 0.08);
-      --radius-lg: 20px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --surface-subtle: #2a2a2a;
+      --text: #ffffff;
+      --text-sub: #aaaaaa;
+      --accent: #e0a96d;
+      --border: rgba(255, 255, 255, 0.08);
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0; padding: 0;
-      background-color: var(--bg-main);
-      color: var(--text-primary);
+      background: var(--bg);
+      color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      -webkit-font-smoothing: antialiased;
     }
 
-    /* Container Principal Responsivo */
-    #album {
-      width: 100%;
-      max-width: 960px; /* Largura ideal para telas grandes */
+    #app {
+      max-width: 900px;
       margin: 0 auto;
-      padding: env(safe-area-inset-top, 24px) 20px calc(env(safe-area-inset-bottom, 24px) + 40px);
+      padding: env(safe-area-inset-top, 20px) 16px 80px;
     }
 
-    /* Topo e Marca */
-    .al-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .al-brand { display: flex; align-items: center; gap: 10px; }
-    .al-logo-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid var(--surface); }
-    .al-brand-text { display: flex; flex-direction: column; }
-    .al-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary); font-weight: 600; }
-    .al-author { font-size: 12px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.02em; }
+    /* Topo / Título */
+    .header { text-align: center; padding: 24px 0 16px; border-bottom: 1px solid var(--border); }
+    .title { font-size: 26px; font-weight: 700; margin: 0; }
+    .subtitle { font-size: 13px; color: var(--text-sub); margin-top: 6px; }
 
-    .al-header { padding: 8px 0 16px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px; }
-    .al-title { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; outline: none; }
-    .al-sub { font-size: 14px; color: var(--text-secondary); outline: none; }
+    /* Navegação por Abas */
+    .nav-tabs { display: flex; gap: 8px; margin: 20px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-sub); font-weight: 600; cursor: pointer; border-radius: 10px; font-size: 13px; }
+    .tab-btn.active { background: var(--accent); color: #000; }
 
-    /* Paletas de Cores */
-    .palette-container { margin-bottom: 16px; }
-    .palette-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 8px; }
-    .palette-picker { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
-    .palette-picker::-webkit-scrollbar { display: none; }
-    .palette-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; flex-shrink: 0; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-    /* Filtros Rápido e Tags */
-    .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
-    .chip { padding: 6px 14px; border-radius: 20px; background: var(--surface); color: var(--text-secondary); font-size: 12px; font-weight: 600; border: 1px solid var(--border-color); cursor: pointer; white-space: nowrap; }
-    .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    /* Filtros da Galeria */
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; }
+    .chip { padding: 6px 14px; border-radius: 20px; background: var(--surface); color: var(--text-sub); border: 1px solid var(--border); font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .chip.active { background: var(--text); color: var(--bg); font-weight: 700; }
 
-    /* Busca */
-    .search-container { margin-bottom: 12px; }
-    .al-search-input { width: 100%; padding: 12px 16px; font-size: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface); color: var(--text-primary); outline: none; }
+    /* Grade de Fotos */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
-    /* Botões Principais */
-    .al-actions { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .btn { padding: 12px; border: 1px solid transparent; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface); color: var(--text-primary); box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: transform 0.15s ease, box-shadow 0.15s ease; }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-    .btn-primary { background: var(--accent); color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-    .btn-outlined { border-color: var(--border-color); }
-    .btn-book { width: 100%; margin-bottom: 16px; background: var(--surface-subtle); border: 1px solid var(--border-color); }
+    .card { background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); cursor: pointer; }
+    .photo-box { width: 100%; aspect-ratio: 1/1; background: var(--surface-subtle); overflow: hidden; }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .card:hover .photo-box img { transform: scale(1.05); }
+    .card-info { padding: 10px; }
+    .card-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    #al-file, #al-restore-file { display: none; }
+    /* Tabela de Serviços */
+    .package-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+    .package-title { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .package-price { font-size: 20px; font-weight: 700; margin: 8px 0; }
+    .package-list { font-size: 13px; color: var(--text-sub); padding-left: 18px; line-height: 1.6; }
 
-    /* Meta Bar */
-    .al-meta-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .al-count { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+    /* Modal de Foto Ampliada */
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px; }
+    .modal-bg.open { opacity: 1; pointer-events: auto; }
+    .modal { background: var(--surface); border-radius: var(--radius); padding: 16px; width: 100%; max-width: 500px; border: 1px solid var(--border); }
+    .modal img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; }
 
-    /* Layout da Grade (Mobile Primeiro) */
-    .al-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .al-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color); cursor: pointer; position: relative; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .al-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-    .al-photo-wrapper { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: var(--surface-subtle); }
-    .al-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .al-card-fav { position: absolute; top: 8px; right: 8px; font-size: 16px; color: #e53935; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-    .al-info { padding: 10px; }
-    .al-cap { font-size: 13px; font-weight: 500; line-height: 1.3; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .al-tag-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 6px; background: var(--surface-subtle); border-radius: 4px; margin-top: 6px; color: var(--text-secondary); }
-
-    /* Modais */
-    .al-modal-bg { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-    .al-modal-bg.open { opacity: 1; pointer-events: auto; }
-    .al-modal { background: var(--surface); width: 100%; max-width: 600px; padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px); border-radius: var(--radius-lg) var(--radius-lg) 0 0; transform: translateY(100%); transition: transform 0.3s ease; max-height: 88vh; overflow-y: auto; }
-    .al-modal-bg.open .al-modal { transform: translateY(0); }
-
-    .al-preview, .al-light-photo { width: 100%; max-height: 280px; object-fit: contain; background: #000; border-radius: var(--radius-md); margin-bottom: 12px; }
-    .al-input { width: 100%; padding: 12px 14px; font-size: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 10px; background: var(--bg-main); color: var(--text-primary); outline: none; }
-    .al-select { width: 100%; padding: 12px 14px; font-size: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 12px; background: var(--bg-main); color: var(--text-primary); outline: none; }
-
-    /* Modo Livro */
-    .book-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); z-index: 3000; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-    .book-modal-bg.open { opacity: 1; pointer-events: auto; }
-    .book-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
-    .book-viewport { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px; touch-action: pan-y; }
-    .book-page { background: var(--surface); width: 100%; max-width: 480px; min-height: 440px; max-height: 75vh; border-radius: var(--radius-lg); padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--text-primary); }
-    .book-photo-card { text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; }
-    .book-photo-card img { width: 100%; max-height: 50vh; object-fit: contain; border-radius: var(--radius-md); }
-
-    .al-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text-primary); color: var(--surface); padding: 10px 20px; border-radius: 30px; font-size: 12px; font-weight: 500; transition: transform 0.3s ease; z-index: 4000; }
-    .al-toast.show { transform: translateX(-50%) translateY(0); }
-
-    /* ------------------------------------------------------------- */
-    /* REGRA MEDIA QUERIES (ADAPTAÇÃO DE LAYOUT PARA TABLET E PC)    */
-    /* ------------------------------------------------------------- */
-
-    /* Tablet (A partir de 601px) */
-    @media (min-width: 601px) {
-      .al-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-      .al-title { font-size: 38px; }
-      .al-modal { border-radius: var(--radius-lg); margin: auto; }
-      .al-modal-bg { align-items: center; }
-    }
-
-    /* PC / Notebook (A partir de 901px) */
-    @media (min-width: 901px) {
-      .al-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-      .al-title { font-size: 42px; }
-      .al-actions { grid-template-columns: 2fr 1fr 1fr; }
-    }
+    .btn-close { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-subtle); color: var(--text); font-weight: 600; cursor: pointer; margin-top: 12px; }
   </style>
 </head>
 <body>
 
-<div id="album">
-  <div class="al-top-bar">
-    <div class="al-brand">
-      <img class="al-logo-img" id="app-logo" alt="By.Wadson Logo">
-      <div class="al-brand-text">
-        <span class="al-eyebrow">Galeria Pessoal</span>
-        <span class="al-author">By.Wadson</span>
-      </div>
+<div id="app">
+  <div class="header">
+    <h1 class="title">Portfólio & Catálogo</h1>
+    <p class="subtitle">Galeria de Trabalhos e Informações de Serviços</p>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('galeria')">🖼️ Galeria</button>
+    <button class="tab-btn" onclick="switchTab('pacotes')">💎 Tabela de Preços</button>
+    <button class="tab-btn" onclick="switchTab('sobre')">✨ Sobre</button>
+  </div>
+
+  <div class="tab-content active" id="tab-galeria">
+    <div class="chips">
+      <button class="chip active" onclick="filterPhotos('all', this)">Todas</button>
+      <button class="chip" onclick="filterPhotos('Ensaios', this)">Ensaios</button>
+      <button class="chip" onclick="filterPhotos('Casamentos', this)">Casamentos</button>
+      <button class="chip" onclick="filterPhotos('Eventos', this)">Eventos</button>
+    </div>
+
+    <div class="grid" id="portfolio-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-pacotes">
+    <div class="package-card">
+      <div class="package-title">Ensaio Individual / Externo</div>
+      <div class="package-price">R$ 350,00</div>
+      <ul class="package-list">
+        <li>1h30 de ensaio</li>
+        <li>20 fotos editadas em alta resolução</li>
+        <li>Entrega via galeria digital privada</li>
+      </ul>
+    </div>
+
+    <div class="package-card">
+      <div class="package-title">Cobertura de Evento</div>
+      <div class="package-price">R$ 800,00</div>
+      <ul class="package-list">
+        <li>Até 4 horas de evento</li>
+        <li>Todas as fotos tratadas</li>
+        <li>Entrega digital rápida</li>
+      </ul>
     </div>
   </div>
 
-  <div class="al-header">
-    <div class="al-title" id="al-title" contenteditable="true">Minhas Memórias</div>
-    <div class="al-sub" id="al-sub" contenteditable="true">Toque aqui para alterar o subtítulo</div>
-  </div>
-
-  <div class="palette-container">
-    <div class="palette-label">Estilos de Cores</div>
-    <div class="palette-picker" id="palette-picker"></div>
-  </div>
-
-  <div class="filter-bar" id="filter-bar">
-    <button class="chip active" data-filter="all">Todas</button>
-    <button class="chip" data-filter="favs">♥ Favoritas</button>
-    <button class="chip" data-filter="tag-Viagem">Viagem</button>
-    <button class="chip" data-filter="tag-Família">Família</button>
-    <button class="chip" data-filter="tag-Retrato">Retrato</button>
-    <button class="chip" data-filter="tag-Natureza">Natureza</button>
-    <button class="chip" data-filter="tag-Trabalho">Trabalho</button>
-    <button class="chip" data-filter="tag-Pessoal">Pessoal</button>
-  </div>
-
-  <div class="search-container">
-    <input type="text" id="al-search" class="al-search-input" placeholder="🔍 Buscar por legenda, local ou tag...">
-  </div>
-
-  <div class="al-actions">
-    <button class="btn btn-primary" id="al-open-picker"> Nova Foto</button>
-    <button class="btn btn-outlined" id="al-backup-btn">Backup</button>
-    <button class="btn btn-outlined" id="al-restore-btn">Restaurar</button>
-  </div>
-
-  <button class="btn btn-book" id="al-open-book">📖 Abrir Modo Livro</button>
-
-  <input type="file" id="al-file" accept="image/*">
-  <input type="file" id="al-restore-file" accept=".json">
-
-  <div class="al-meta-bar">
-    <div class="al-count" id="al-count">0 fotos salvas</div>
-  </div>
-
-  <div class="al-grid" id="al-grid"></div>
-</div>
-
-<div class="al-modal-bg" id="al-modal-bg">
-  <div class="al-modal">
-    <img class="al-preview" id="al-preview">
-    <input class="al-input" id="al-caption" placeholder="Legenda da foto...">
-    <input class="al-input" id="al-location" placeholder="📍 Localização (opcional)">
-    <select class="al-select" id="al-tag">
-      <option value="">Selecione uma Categoria/Tag</option>
-      <option value="Viagem">Viagem</option>
-      <option value="Família">Família</option>
-      <option value="Retrato">Retrato</option>
-      <option value="Natureza">Natureza</option>
-      <option value="Trabalho">Trabalho</option>
-      <option value="Pessoal">Pessoal</option>
-    </select>
-    <div style="display:flex; gap:10px;">
-      <button class="btn btn-outlined" id="al-cancel" style="flex:1">Cancelar</button>
-      <button class="btn btn-primary" id="al-save" style="flex:1">Salvar</button>
+  <div class="tab-content" id="tab-sobre">
+    <div style="background:var(--surface); padding:20px; border-radius:var(--radius); border:1px solid var(--border); line-height:1.6; font-size:14px; color:var(--text-sub);">
+      <h3 style="color:var(--text); margin-top:0;">Catálogo Digital</h3>
+      <p>Apresentação visual de trabalhos fotográficos. Para personalizar o catálogo com suas próprias fotos, adicione os links das imagens no arquivo de código.</p>
     </div>
   </div>
 </div>
 
-<div class="al-modal-bg" id="al-light-bg">
-  <div class="al-modal">
-    <img class="al-light-photo" id="al-light-photo">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <button class="btn btn-outlined" id="al-fav-btn" style="color:#e53935;">♡ Favoritar</button>
-      <button class="btn btn-outlined" id="al-light-download">💾 Baixar</button>
+<div class="modal-bg" id="photo-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <img id="modal-img" src="" alt="Foto Ampliada">
+    <div style="margin-top:12px;">
+      <div id="modal-title" style="font-weight:700; font-size:16px;"></div>
+      <div id="modal-tag" style="font-size:12px; color:var(--accent); margin-top:4px;"></div>
     </div>
-    <input class="al-input" id="al-edit-caption" placeholder="Editar legenda...">
-    <input class="al-input" id="al-edit-location" placeholder="📍 Localização">
-    <select class="al-select" id="al-edit-tag">
-      <option value="">Sem categoria</option>
-      <option value="Viagem">Viagem</option>
-      <option value="Família">Família</option>
-      <option value="Retrato">Retrato</option>
-      <option value="Natureza">Natureza</option>
-      <option value="Trabalho">Trabalho</option>
-      <option value="Pessoal">Pessoal</option>
-    </select>
-    <div style="display:flex; gap:8px;">
-      <button class="btn btn-outlined" id="al-light-remove" style="flex:1; color:#e53935; border-color:rgba(229,57,53,0.2);">Excluir</button>
-      <button class="btn btn-primary" id="al-light-save" style="flex:1">Atualizar</button>
-    </div>
+    <button class="btn-close" onclick="document.getElementById('photo-modal').classList.remove('open')">Fechar Visualização</button>
   </div>
 </div>
-
-<div class="book-modal-bg" id="book-modal">
-  <div class="book-header">
-    <span style="font-weight:600">Álbum Físico Digital</span>
-    <button class="btn btn-outlined" id="book-close" style="color:#fff; border-color:rgba(255,255,255,0.3); padding:4px 10px;">Fechar</button>
-  </div>
-  <div class="book-viewport" id="book-viewport">
-    <div class="book-page" id="book-page-content"></div>
-  </div>
-  <div style="padding:16px; display:flex; justify-content:space-between; align-items:center; max-width:440px; margin:0 auto; width:100%; color:#fff;">
-    <button class="btn btn-outlined" id="book-prev" style="color:#fff; border-color:rgba(255,255,255,0.3);">← Anterior</button>
-    <span id="book-page-num" style="font-size:12px;">Página 1</span>
-    <button class="btn btn-outlined" id="book-next" style="color:#fff; border-color:rgba(255,255,255,0.3);">Próxima →</button>
-  </div>
-</div>
-
-<div class="al-toast" id="al-toast"></div>
 
 <script>
-(function() {
-  const PALETTES = [
-    { name: 'Nude', bg: '#f8f6f0', surface: '#ffffff', subtle: '#f0ede6', text: '#1c1a17', secondary: '#706c64', accent: '#2c2a29' },
-    { name: 'Sálvia', bg: '#f0f4f1', surface: '#ffffff', subtle: '#e1e8e3', text: '#192823', secondary: '#577066', accent: '#2d4a3e' },
-    { name: 'Quartzo', bg: '#f7f0f2', surface: '#ffffff', subtle: '#efe2e6', text: '#2a181e', secondary: '#7a5663', accent: '#522938' },
-    { name: 'Azul Elétrico', bg: '#0b132b', surface: '#1c2541', subtle: '#3a506b', text: '#ffffff', secondary: '#5bc0be', accent: '#6fffe9' },
-    { name: 'Pôr do Sol', bg: '#2b0e11', surface: '#4a151b', subtle: '#6e2028', text: '#ffffff', secondary: '#ffb703', accent: '#fb8500' },
-    { name: 'Cyber Neon', bg: '#081c15', surface: '#1b4332', subtle: '#2d6a4f', text: '#ffffff', secondary: '#74c69d', accent: '#52b788' },
-    { name: 'Roxo Vibrante', bg: '#10002b', surface: '#240046', subtle: '#3c096c', text: '#ffffff', secondary: '#9d4edd', accent: '#e0aaff' },
-    { name: 'Grafite Escuro', bg: '#121212', surface: '#1e1e1e', subtle: '#2c2c2c', text: '#ffffff', secondary: '#a0a0a0', accent: '#ffffff' }
+  // SUAS FOTOS AQUI (Substitua pelos links das suas imagens):
+  const portfolioData = [
+    { id: 1, title: "Ensaio External", tag: "Ensaios", url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" },
+    { id: 2, title: "Cerimônia", tag: "Casamentos", url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800" },
+    { id: 3, title: "Retrato Studio", tag: "Ensaios", url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" },
+    { id: 4, title: "Celebração", tag: "Eventos", url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800" }
   ];
 
-  let db;
-  const DB_NAME = "ModernAlbumDB_Clean";
-
-  function initDB() {
-    return new Promise((resolve) => {
-      const request = indexedDB.open(DB_NAME, 1);
-      request.onsuccess = (e) => { db = e.target.result; resolve(); };
-      request.onupgradeneeded = (e) => {
-        let db = e.target.result;
-        if (!db.objectStoreNames.contains("photos")) db.createObjectStore("photos", { keyPath: "id" });
-        if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
-      };
-    });
-  }
-
-  function dbSave(storeName, data) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(storeName, "readwrite");
-      tx.objectStore(storeName).put(data);
-      tx.oncomplete = () => resolve(true);
-    });
-  }
-
-  function dbGetAll(storeName) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(storeName, "readonly");
-      const req = tx.objectStore(storeName).getAll();
-      req.onsuccess = () => resolve(req.result || []);
-    });
-  }
-
-  function dbGet(storeName, key) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(storeName, "readonly");
-      const req = tx.objectStore(storeName).get(key);
-      req.onsuccess = () => resolve(req.result ? req.result.value : null);
-    });
-  }
-
-  function dbDelete(storeName, key) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(storeName, "readwrite");
-      tx.objectStore(storeName).delete(key);
-      tx.oncomplete = () => resolve(true);
-    });
-  }
-
-  let entries = [];
-  let pendingImage = null;
-  let activePhotoId = null;
-  let activeFilter = "all";
-  let bookPageIndex = 0;
-
-  const fileInput = document.getElementById("al-file");
-  const restoreFileInput = document.getElementById("al-restore-file");
-  const openPickerBtn = document.getElementById("al-open-picker");
-  const modalBg = document.getElementById("al-modal-bg");
-  const preview = document.getElementById("al-preview");
-  const captionInput = document.getElementById("al-caption");
-  const locationInput = document.getElementById("al-location");
-  const tagInput = document.getElementById("al-tag");
-  const saveBtn = document.getElementById("al-save");
-  const cancelBtn = document.getElementById("al-cancel");
-  const grid = document.getElementById("al-grid");
-  const countEl = document.getElementById("al-count");
-  const searchInput = document.getElementById("al-search");
-
-  const lightBg = document.getElementById("al-light-bg");
-  const lightPhoto = document.getElementById("al-light-photo");
-  const editCaptionInput = document.getElementById("al-edit-caption");
-  const editLocationInput = document.getElementById("al-edit-location");
-  const editTagInput = document.getElementById("al-edit-tag");
-  const favBtn = document.getElementById("al-fav-btn");
-  const lightRemove = document.getElementById("al-light-remove");
-  const lightSave = document.getElementById("al-light-save");
-  const lightDownload = document.getElementById("al-light-download");
-
-  const titleEl = document.getElementById("al-title");
-  const subEl = document.getElementById("al-sub");
-
-  const LOGO_DATA = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231c2541'/><circle cx='50' cy='50' r='44' fill='none' stroke='%23ffb703' stroke-width='2'/><path d='M30,65 L50,35 L70,65 Z' fill='%236fffe9'/><circle cx='50' cy='42' r='6' fill='%23ffb703'/><text x='50' y='82' font-size='10' font-weight='bold' fill='%23ffffff' text-anchor='middle' font-family='sans-serif'>By.Wadson</text></svg>";
-
-  window.addEventListener("DOMContentLoaded", async () => {
-    document.getElementById("app-logo").src = LOGO_DATA;
-    await initDB();
-    renderPalettePicker();
-
-    const savedPalette = await dbGet("settings", "selected_palette");
-    if (savedPalette) applyPalette(savedPalette);
-
-    const savedTitle = await dbGet("settings", "album_title");
-    if (savedTitle) titleEl.innerText = savedTitle;
-
-    const savedSub = await dbGet("settings", "album_sub");
-    if (savedSub) subEl.innerText = savedSub;
-
-    entries = await dbGetAll("photos");
-    entries.sort((a, b) => new Date(b.date) - new Date(a.date));
-    render();
-    setupFilterChips();
-  });
-
-  titleEl.addEventListener("blur", () => dbSave("settings", { key: "album_title", value: titleEl.innerText }));
-  subEl.addEventListener("blur", () => dbSave("settings", { key: "album_sub", value: subEl.innerText }));
-
-  searchInput.addEventListener("input", () => render());
-
-  function setupFilterChips() {
-    document.querySelectorAll(".filter-bar .chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".filter-bar .chip").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        activeFilter = chip.dataset.filter;
-        render();
-      });
-    });
-  }
-
-  function renderPalettePicker() {
-    const picker = document.getElementById("palette-picker");
-    PALETTES.forEach((p) => {
-      const btn = document.createElement("button");
-      btn.className = "palette-btn";
-      btn.style.backgroundColor = p.bg;
-      btn.style.borderColor = p.accent;
-      btn.title = p.name;
-      btn.addEventListener("click", () => {
-        applyPalette(p);
-        dbSave("settings", { key: "selected_palette", value: p });
-      });
-      picker.appendChild(btn);
-    });
-  }
-
-  function applyPalette(p) {
-    const root = document.documentElement;
-    root.style.setProperty('--bg-main', p.bg);
-    root.style.setProperty('--surface', p.surface);
-    root.style.setProperty('--surface-subtle', p.subtle);
-    root.style.setProperty('--text-primary', p.text);
-    root.style.setProperty('--text-secondary', p.secondary);
-    root.style.setProperty('--accent', p.accent);
-  }
-
-  openPickerBtn.addEventListener("click", () => fileInput.click());
-
-  fileInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 1200;
-        let width = img.width, height = img.height;
-        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-        canvas.width = width; canvas.height = height;
-        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-
-        pendingImage = canvas.toDataURL("image/jpeg", 0.82);
-        preview.src = pendingImage;
-        captionInput.value = "";
-        locationInput.value = "";
-        tagInput.value = "";
-        modalBg.classList.add("open");
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-    fileInput.value = "";
-  });
-
-  cancelBtn.addEventListener("click", () => { modalBg.classList.remove("open"); pendingImage = null; });
-
-  saveBtn.addEventListener("click", async () => {
-    if (!pendingImage) return;
-    const newEntry = {
-      id: "img_" + Date.now(),
-      photo: pendingImage,
-      caption: captionInput.value.trim() || "Sem legenda",
-      location: locationInput.value.trim() || "",
-      tag: tagInput.value || "",
-      isFav: false,
-      date: new Date().toISOString()
-    };
-    entries.unshift(newEntry);
-    await dbSave("photos", newEntry);
-    render();
-    modalBg.classList.remove("open");
-    pendingImage = null;
-    showToast("Foto adicionada!");
-  });
-
-  function openLight(id) {
-    const item = entries.find(e => e.id === id);
-    if (!item) return;
-    activePhotoId = id;
-    lightPhoto.src = item.photo;
-    editCaptionInput.value = item.caption;
-    editLocationInput.value = item.location || "";
-    editTagInput.value = item.tag || "";
-    favBtn.innerText = item.isFav ? "♥ Favoritado" : "♡ Favoritar";
-    lightBg.classList.add("open");
-  }
-
-  favBtn.addEventListener("click", async () => {
-    const item = entries.find(e => e.id === activePhotoId);
-    if (item) {
-      item.isFav = !item.isFav;
-      favBtn.innerText = item.isFav ? "♥ Favoritado" : "♡ Favoritar";
-      await dbSave("photos", item);
-      render();
-    }
-  });
-
-  lightSave.addEventListener("click", async () => {
-    const item = entries.find(e => e.id === activePhotoId);
-    if (item) {
-      item.caption = editCaptionInput.value.trim() || "Sem legenda";
-      item.location = editLocationInput.value.trim() || "";
-      item.tag = editTagInput.value || "";
-      await dbSave("photos", item);
-      render();
-      lightBg.classList.remove("open");
-      showToast("Foto atualizada!");
-    }
-  });
-
-  lightRemove.addEventListener("click", async () => {
-    if (confirm("Excluir esta foto?")) {
-      entries = entries.filter(e => e.id !== activePhotoId);
-      await dbDelete("photos", activePhotoId);
-      render();
-      lightBg.classList.remove("open");
-      showToast("Foto apagada!");
-    }
-  });
-
-  lightDownload.addEventListener("click", () => {
-    const item = entries.find(e => e.id === activePhotoId);
-    if (!item) return;
-    const a = document.createElement("a");
-    a.href = item.photo;
-    a.download = `foto-${item.id}.jpg`;
-    a.click();
-  });
-
-  lightBg.addEventListener("click", (e) => { if (e.target === lightBg) lightBg.classList.remove("open"); });
-
-  const bookModal = document.getElementById("book-modal");
-  const bookViewport = document.getElementById("book-viewport");
-
-  document.getElementById("al-open-book").addEventListener("click", () => {
-    if (entries.length === 0) return showToast("Adicione fotos para abrir o livro");
-    bookPageIndex = 0;
-    renderBookPage();
-    bookModal.classList.add("open");
-  });
-
-  document.getElementById("book-close").addEventListener("click", () => bookModal.classList.remove("open"));
-
-  document.getElementById("book-prev").addEventListener("click", () => {
-    if (bookPageIndex > 0) { bookPageIndex--; renderBookPage(); }
-  });
-
-  document.getElementById("book-next").addEventListener("click", () => {
-    if (bookPageIndex < entries.length - 1) { bookPageIndex++; renderBookPage(); }
-  });
-
-  let touchStartX = 0;
-  bookViewport.addEventListener("touchstart", e => touchStartX = e.touches[0].clientX);
-  bookViewport.addEventListener("touchend", e => {
-    let touchEndX = e.changedTouches[0].clientX;
-    if (touchStartX - touchEndX > 50 && bookPageIndex < entries.length - 1) {
-      bookPageIndex++; renderBookPage();
-    } else if (touchEndX - touchStartX > 50 && bookPageIndex > 0) {
-      bookPageIndex--; renderBookPage();
-    }
-  });
-
-  function renderBookPage() {
-    const bookContent = document.getElementById("book-page-content");
-    document.getElementById("book-page-num").innerText = `Página ${bookPageIndex + 1} de ${entries.length}`;
-
-    const item = entries[bookPageIndex];
-    if (!item) return;
-
-    bookContent.innerHTML = `
-      <div class="book-photo-card">
-        <img src="${item.photo}">
-        <div style="font-size:15px; font-weight:600; margin-top:12px;">${escapeHtml(item.caption)}</div>
-        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
-          ${item.location ? '📍 ' + escapeHtml(item.location) + ' • ' : ''}${item.tag ? '🏷️ ' + item.tag + ' • ' : ''}${formatDate(item.date)}
-        </div>
-      </div>
-    `;
-  }
-
-  function render() {
-    const query = searchInput.value.toLowerCase().trim();
-    let filtered = entries.filter(e => {
-      const matchQuery = e.caption.toLowerCase().includes(query) || 
-                         (e.location && e.location.toLowerCase().includes(query)) ||
-                         (e.tag && e.tag.toLowerCase().includes(query));
-      
-      if (activeFilter === "favs") return matchQuery && e.isFav;
-      if (activeFilter.startsWith("tag-")) return matchQuery && e.tag === activeFilter.replace("tag-", "");
-      return matchQuery;
-    });
-
-    countEl.innerText = `${filtered.length} ${filtered.length === 1 ? 'foto' : 'fotos'}`;
+  function renderPortfolio(filter = 'all') {
+    const grid = document.getElementById("portfolio-grid");
     grid.innerHTML = "";
+    
+    const list = filter === 'all' ? portfolioData : portfolioData.filter(item => item.tag === filter);
 
-    filtered.forEach(entry => {
+    list.forEach(item => {
       const card = document.createElement("div");
-      card.className = "al-card";
+      card.className = "card";
       card.innerHTML = `
-        ${entry.isFav ? '<div class="al-card-fav">♥</div>' : ''}
-        <div class="al-photo-wrapper">
-          <img class="al-photo" src="${entry.photo}" loading="lazy">
-        </div>
-        <div class="al-info">
-          <div class="al-cap">${escapeHtml(entry.caption)}</div>
-          ${entry.tag ? `<span class="al-tag-badge">🏷️ ${entry.tag}</span>` : ''}
+        <div class="photo-box"><img src="${item.url}" loading="lazy"></div>
+        <div class="card-info">
+          <div class="card-title">${item.title}</div>
         </div>
       `;
-      card.addEventListener("click", () => openLight(entry.id));
+      card.onclick = () => openModal(item);
       grid.appendChild(card);
     });
   }
 
-  function formatDate(isoStr) {
-    try { return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' }).format(new Date(isoStr)); } catch (e) { return ""; }
+  function filterPhotos(tag, element) {
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+    element.classList.add("active");
+    renderPortfolio(tag);
   }
 
-  function escapeHtml(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  function switchTab(tabId) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+    
+    event.target.classList.add("active");
+    document.getElementById(`tab-${tabId}`).classList.add("active");
   }
 
-  document.getElementById("al-backup-btn").addEventListener("click", async () => {
-    if (entries.length === 0) return showToast("Sem fotos para backup");
-    const settings = { title: titleEl.innerText, sub: subEl.innerText, palette: await dbGet("settings", "selected_palette") };
-    const backupData = { version: 1, exportDate: new Date().toISOString(), settings: settings, photos: entries };
-    const blob = new Blob([JSON.stringify(backupData)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `galeria-backup-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast("Backup gerado!");
-  });
-
-  document.getElementById("al-restore-btn").addEventListener("click", () => restoreFileInput.click());
-
-  restoreFileInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if (data.photos && Array.isArray(data.photos)) {
-          for (let photo of data.photos) { await dbSave("photos", photo); }
-          entries = await dbGetAll("photos");
-          entries.sort((a, b) => new Date(b.date) - new Date(a.date));
-          render();
-          showToast("Dados restaurados!");
-        }
-      } catch (err) { showToast("Erro no arquivo de backup."); }
-    };
-    reader.readAsText(file);
-    restoreFileInput.value = "";
-  });
-
-  function showToast(msg) {
-    const toast = document.getElementById("al-toast");
-    toast.textContent = msg;
-    toast.classList.add("show");
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => toast.classList.remove("show"), 2500);
+  function openModal(item) {
+    document.getElementById("modal-img").src = item.url;
+    document.getElementById("modal-title").innerText = item.title;
+    document.getElementById("modal-tag").innerText = `#${item.tag}`;
+    document.getElementById("photo-modal").classList.add("open");
   }
-})();
+
+  function closeModal(e) {
+    if (e.target.id === "photo-modal") {
+      document.getElementById("photo-modal").classList.remove("open");
+    }
+  }
+
+  renderPortfolio();
 </script>
 </body>
 </html>
